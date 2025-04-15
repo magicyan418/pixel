@@ -2,7 +2,7 @@
  * @Author: 严钦蓝
  * @FilePath: \pixel-nextjs\src\app\home\page.tsx
  * @LastEditors: 严钦蓝
- * @LastEditTime: 2025-04-15 15:54:41
+ * @LastEditTime: 2025-04-15 17:22:19
  * @Description:
  */
 "use client";
@@ -143,7 +143,7 @@ interface Paddle {
   isVertical: boolean;
 }
 
-export function PromptingIsAllYouNeed() {
+const PromptingIsAllYouNeed = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const ballRef = useRef<Ball>({ x: 0, y: 0, dx: 0, dy: 0, radius: 0 });
