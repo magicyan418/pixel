@@ -1,14 +1,15 @@
 /*
  * @Author: 严钦蓝
  * @FilePath: \pixel-nextjs\src\app\home\page.tsx
- * @LastEditors: 严钦蓝
- * @LastEditTime: 2025-04-15 17:22:19
+ * @LastEditors: pd001
+ * @LastEditTime: 2025-04-30 17:31:12
  * @Description:
  */
 "use client";
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import BlackHoleButton from "@/components/BlackHoleButton"
 
 const COLOR = "#FFFFFF";
 const HIT_COLOR = "#333333";
@@ -439,21 +440,14 @@ const PromptingIsAllYouNeed = () => {
 
   return (
     <>
+    <div className="fixed top-0 left-0 w-full h-full bg-white"></div>
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full"
       aria-label="Prompting Is All You Need: Fullscreen Pong game with pixel text"
     />
-      <div className="fixed right-1/2 bottom-20 transform translate-x-1/2">
-        <button
-          onClick={() => router.push('/monopoly')}
-          className="opacity-0 hover:opacity-100 transition-opacity duration-500 ease-in-out 
-            bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full 
-            shadow-lg hover:shadow-xl transform hover:scale-105 transition-all font-medium 
-            text-lg uppercase tracking-wide backdrop-blur-sm cursor-pointer"
-        >
-          Get Started
-        </button>
+      <div className="fixed right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-[50px]">
+      <BlackHoleButton buttonText="召唤卡冈图雅" intensity={1.3} duration={6000} onClick={() => console.log("clicked")} />
       </div>
     </>
   );
