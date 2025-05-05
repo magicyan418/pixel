@@ -24,3 +24,140 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* Terminal cursor animation */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.terminal-cursor {
+  animation: blink 1s step-end infinite;
+}
+
+/* Custom scrollbar for terminal */
+.terminal-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-track {
+  background: rgba(30, 30, 30, 0.5);
+  border-radius: 3px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 170, 0.5);
+  border-radius: 3px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 170, 0.8);
+}
+
+/* Gradient text effects */
+.gradient-text {
+  background: linear-gradient(90deg, #00f5a0 0%, #00d9f5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.gradient-text-purple {
+  background: linear-gradient(90deg, #da22ff 0%, #9733ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.gradient-text-gold {
+  background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* Terminal window effects */
+.terminal-window {
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid rgba(0, 255, 170, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 170, 0.2), 0 0 30px rgba(0, 255, 170, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.terminal-header {
+  background: linear-gradient(90deg, #111111 0%, #222222 100%);
+  border-bottom: 1px solid rgba(0, 255, 170, 0.3);
+}
+
+.terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.terminal-button-red {
+  background-color: #ff5f56;
+}
+
+.terminal-button-yellow {
+  background-color: #ffbd2e;
+}
+
+.terminal-button-green {
+  background-color: #27c93f;
+}
+
+/* Typing animation */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.typing-animation {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 1s steps(30, end);
+}
+
+/* Glow effect */
+.text-glow {
+  text-shadow: 0 0 5px rgba(0, 255, 170, 0.5);
+}
+
+.text-glow-blue {
+  text-shadow: 0 0 5px rgba(0, 198, 255, 0.5);
+}
+
+.text-glow-purple {
+  text-shadow: 0 0 5px rgba(218, 34, 255, 0.5);
+}
+
