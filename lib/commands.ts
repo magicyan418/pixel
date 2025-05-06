@@ -147,11 +147,11 @@ function openUrl(url: string): string {
 function listDirectory(path?: string): string {
   const targetPath = path ? resolvePath(path) : currentDir
 
-  if (!FILE_SYSTEM[targetPath]) {
+  if (!(targetPath in FILE_SYSTEM)) {
     return `ls: cannot access '${targetPath}': No such file or directory`
   }
 
-  return FILE_SYSTEM[targetPath].join("  ")
+  return FILE_SYSTEM[targetPath as keyof typeof FILE_SYSTEM].join("  ")
 }
 
 /**
@@ -165,7 +165,7 @@ function changeDirectory(path?: string): string {
 
   const targetPath = resolvePath(path)
 
-  if (!FILE_SYSTEM[targetPath] && targetPath !== "/") {
+  if (!FILE_SYSTEM[targetPath as keyof typeof FILE_SYSTEM] && targetPath !== "/") {
     return `cd: no such directory: ${path}`
   }
 
