@@ -1,14 +1,15 @@
 /*
  * @Author: 严钦蓝
- * @FilePath: \pixel-nextjs\src\app\home\page.tsx
- * @LastEditors: pd001
- * @LastEditTime: 2025-04-30 17:31:12
+ * @FilePath: \pixel\app\home\page.tsx
+ * @LastEditors: 严钦蓝
+ * @LastEditTime: 2025-05-08 17:53:03
  * @Description:
  */
 "use client";
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { gsap } from 'gsap';
 import BlackHoleButton from "@/components/BlackHoleButton"
 
 const COLOR = "#FFFFFF";
@@ -440,14 +441,51 @@ const PromptingIsAllYouNeed = () => {
 
   return (
     <>
-    <div className="fixed top-0 left-0 w-full h-full bg-white"></div>
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full"
+      className="fixed top-0 left-0 w-full h-full transition-opacity duration-1000"
+      style={{ 
+        opacity: 1,
+        clipPath: 'circle(100% at center)'
+      }}
       aria-label="Prompting Is All You Need: Fullscreen Pong game with pixel text"
     />
       <div className="fixed right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-[50px]">
-      <BlackHoleButton buttonText="召唤卡冈图雅" intensity={1.3} duration={6000} onClick={() => console.log("clicked")} />
+      <BlackHoleButton 
+        buttonText="Get Started" 
+        intensity={1.3} 
+        duration={6000} 
+        onClick={() => {
+          const canvas = canvasRef.current;
+          if(canvas) {
+            // 创建时间轴动画
+            const tl = gsap.timeline({
+              onComplete: () => {
+                router.push("/terminal");
+              }
+            });
+            
+            // 先添加透明度动画到0.6
+            tl.to(canvas, {
+              opacity: 0.7,
+              duration: .6,
+              ease: "power2.out"
+            })
+            // 添加圆形收缩动画
+            .to(canvas, {
+              clipPath: "circle(0% at center)",
+              duration: 3.5,
+              ease: "power2.inOut"
+            })
+            // 最后完全透明
+            .to(canvas, {
+              opacity: 0,
+              duration: .5,
+              ease: "power2.inOut"
+            }, "-=0.5"); // 让最后的透明度动画在收缩动画结束前0.5秒开始
+          }
+        }} 
+      />
       </div>
     </>
   );

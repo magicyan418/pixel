@@ -102,7 +102,7 @@ const Terminal = forwardRef(({ history, onCommand }: TerminalProps, ref: Forward
           <div key={index} className="mb-2">
             {item.type === "command" ? (
               <div>
-                <span className="gradient-text-blue text-glow-blue">user@web-terminal</span>
+                <span className="gradient-text-blue text-glow-blue">user@magicyan418</span>
                 <span className="text-white">:</span>
                 <span className="gradient-text-purple text-glow-purple">~</span>
                 <span className="text-white">$ </span>
@@ -121,7 +121,7 @@ const Terminal = forwardRef(({ history, onCommand }: TerminalProps, ref: Forward
       <div className="border-t border-gray-800 bg-black bg-opacity-70 p-2">
         <form onSubmit={handleSubmit} className="flex items-center">
           <div className="flex-shrink-0">
-            <span className="gradient-text-blue text-glow-blue">magicyan418@terminal</span>
+            <span className="gradient-text-blue text-glow-blue">user@magicyan418</span>
             <span className="text-white">:</span>
             <span className="gradient-text-purple text-glow-purple">~</span>
             <span className="text-white">$ </span>
