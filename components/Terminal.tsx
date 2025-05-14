@@ -120,8 +120,8 @@ const Terminal = forwardRef(({ history, onCommand }: TerminalProps, ref: Forward
       {/* Command input */}
       <div className="border-t border-gray-800 bg-black bg-opacity-70 p-2">
         <form onSubmit={handleSubmit} className="flex items-center">
-          <div className="flex-shrink-0">
-            <span className="gradient-text-blue text-glow-blue">user@magicyan418</span>
+          <div className="flex-shrink-0 font-mono">
+            <span className="gradient-text-blue text-glow-blue">root@magicyan418</span>
             <span className="text-white">:</span>
             <span className="gradient-text-purple text-glow-purple">~</span>
             <span className="text-white">$ </span>
@@ -132,7 +132,7 @@ const Terminal = forwardRef(({ history, onCommand }: TerminalProps, ref: Forward
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent border-none outline-none gradient-text ml-1"
+            className="flex-1 bg-transparent border-none outline-none ml-2 terminal-cursor gradient-text"
             aria-label="Terminal input"
           />
         </form>
