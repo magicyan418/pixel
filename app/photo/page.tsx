@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
+import ImagePreview from "./components/ImagePreview"
 
 export default function Home() {
   // Canvas 相关引用
@@ -14,11 +15,18 @@ export default function Home() {
   const targetOffsetRef = useRef({ x: 0, y: 0 }) // 目标偏移量（用于平滑过渡）
   const isDraggingRef = useRef(false) // 是否正在拖拽
   const startPosRef = useRef({ x: 0, y: 0 }) // 拖拽起始位置
+  const mouseDownPosRef = useRef({ x: 0, y: 0 }) // 鼠标按下位置
+  const clickedImageRef = useRef<ImageItem | null>(null) // 点击的图片引用
+  const velocityRef = useRef({ x: 0, y: 0 }) // 滑动速度
+  const lastMousePosRef = useRef({ x: 0, y: 0 }) // 上一帧鼠标位置
+  const lastTimeRef = useRef<number>(0) // 上一帧时间戳
 
   // 图片相关引用
   const imagesRef = useRef<ImageItem[]>([]) // 所有图片项数组
   const imageCacheRef = useRef<Map<string, HTMLImageElement>>(new Map()) // 图片缓存，避免重复加载
   const lastFrameTimeRef = useRef<number>(0) // 上一帧时间戳，用于计算帧间隔
+  const usedImageIndicesRef = useRef<Set<number>>(new Set()) // 已使用的图片索引集合
+  const availableImageIndicesRef = useRef<number[]>([]) // 可用的图片索引数组
 
   // 网格配置
   const gridInfoRef = useRef({
@@ -33,6 +41,11 @@ export default function Home() {
   const [isInitialized, setIsInitialized] = useState(false) // 是否已初始化
   const [pixabayImages, setPixabayImages] = useState<PixabayImage[]>([]) // Pixabay API 返回的图片数组
   const [isLoading, setIsLoading] = useState(true) // 是否正在加载
+  
+  // 预览相关状态
+  const [previewImage, setPreviewImage] = useState<PreviewImageType | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
+  const isPreviewingRef = useRef(false) // 是否正在预览中（动画进行中）
 
   // 定义 Pixabay 图片类型
   type PixabayImage = {
@@ -54,6 +67,17 @@ export default function Home() {
     loaded: boolean // 是否已加载完成
   }
 
+  // 定义预览图片类型
+  type PreviewImageType = {
+    src: string
+    originalPosition: {
+      x: number
+      y: number
+      width: number
+      height: number
+    }
+  }
+
   // 获取 Pixabay 图片
   useEffect(() => {
     const fetchPixabayImages = async () => {
@@ -61,10 +85,20 @@ export default function Home() {
         setIsLoading(true)
         // 调用 Pixabay API 获取图片
         const response = await fetch(
-          "https://pixabay.com/api/?key=50283552-f0300aed1a542b4b8eeccbebe&q=city&min_width=300&min_height=400&editors_choice=true&per_page=25"
+          "https://pixabay.com/api/?key=50283552-f0300aed1a542b4b8eeccbebe&q=art&min_width=300&min_height=400&editors_choice=true&per_page=30"
         )
         const data = await response.json()
         setPixabayImages(data.hits)
+        
+        // 初始化可用图片索引数组
+        availableImageIndicesRef.current = Array.from({ length: data.hits.length }, (_, i) => i)
+        // 打乱数组顺序
+        for (let i = availableImageIndicesRef.current.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [availableImageIndicesRef.current[i], availableImageIndicesRef.current[j]] = 
+          [availableImageIndicesRef.current[j], availableImageIndicesRef.current[i]];
+        }
+        
         setIsLoading(false)
       } catch (error) {
         console.error("获取 Pixabay 图片失败:", error)
@@ -147,11 +181,26 @@ export default function Home() {
         }
       }
 
+      // 如果不在拖拽状态且有速度，应用惯性
+      if (!isDraggingRef.current && (Math.abs(velocityRef.current.x) > 0.1 || Math.abs(velocityRef.current.y) > 0.1)) {
+        // 应用惯性
+        targetOffsetRef.current = {
+          x: targetOffsetRef.current.x + velocityRef.current.x,
+          y: targetOffsetRef.current.y + velocityRef.current.y,
+        }
+
+        // 应用阻尼
+        velocityRef.current = {
+          x: velocityRef.current.x * 0.75,
+          y: velocityRef.current.y * 0.75,
+        }
+      }
+
       // 绘制图片
       drawImages()
 
-      // 检查是否需要生成更多图片（仅在非拖拽状态）
-      if (!isDraggingRef.current) {
+      // 检查是否需要生成更多图片（仅在非拖拽状态且非预览状态）
+      if (!isDraggingRef.current && !isPreviewingRef.current) {
         checkAndGenerateMoreImages()
       }
 
@@ -190,8 +239,24 @@ export default function Home() {
     if (pixabayImages.length === 0) {
       return "../favicon.ico" // 备用图片
     }
-    // 随机选择一张图片
-    const randomIndex = Math.floor(Math.random() * pixabayImages.length)
+
+    // 如果所有图片都已使用，重置可用图片
+    if (availableImageIndicesRef.current.length === 0) {
+      // 重新生成可用图片索引数组
+      availableImageIndicesRef.current = Array.from({ length: pixabayImages.length }, (_, i) => i)
+      // 打乱数组顺序
+      for (let i = availableImageIndicesRef.current.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableImageIndicesRef.current[i], availableImageIndicesRef.current[j]] = 
+        [availableImageIndicesRef.current[j], availableImageIndicesRef.current[i]];
+      }
+    }
+
+    // 从可用图片中取出一个索引
+    const randomIndex = availableImageIndicesRef.current.pop()!
+    // 记录已使用的索引
+    usedImageIndicesRef.current.add(randomIndex)
+    
     return pixabayImages[randomIndex].webformatURL
   }
 
@@ -424,9 +489,99 @@ export default function Home() {
     }
   }
 
+  // 检测点击位置是否在图片上，返回点击的图片
+  const getClickedImage = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current
+    if (!canvas) return null
+
+    const viewportWidth = canvas.width
+    const viewportHeight = canvas.height
+
+    // 遍历所有图片，从后向前检查（后绘制的在上层）
+    for (let i = imagesRef.current.length - 1; i >= 0; i--) {
+      const img = imagesRef.current[i]
+      const drawX = viewportWidth / 2 + img.x + offsetRef.current.x
+      const drawY = viewportHeight / 2 + img.y + offsetRef.current.y
+
+      // 检查点击位置是否在图片范围内
+      if (
+        clientX >= drawX &&
+        clientX <= drawX + img.width &&
+        clientY >= drawY &&
+        clientY <= drawY + img.height
+      ) {
+        return img
+      }
+    }
+
+    return null
+  }
+
+  // 处理图片点击预览
+  const handleImageClick = (clientX: number, clientY: number) => {
+    if (isPreviewingRef.current || showPreview) return
+
+    // 获取点击的图片
+    const clickedImage = getClickedImage(clientX, clientY)
+    if (!clickedImage) return
+
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const viewportWidth = canvas.width
+    const viewportHeight = canvas.height
+    
+    // 计算图片在画布上的当前位置
+    const drawX = viewportWidth / 2 + clickedImage.x + offsetRef.current.x
+    const drawY = viewportHeight / 2 + clickedImage.y + offsetRef.current.y
+
+    // 设置预览图片信息
+    setPreviewImage({
+      src: clickedImage.src,
+      originalPosition: {
+        x: drawX,
+        y: drawY,
+        width: clickedImage.width,
+        height: clickedImage.height,
+      },
+    })
+
+    // 设置预览状态
+    isPreviewingRef.current = true
+    setShowPreview(true)
+  }
+
+  // 关闭预览
+  const handleClosePreview = () => {
+    setShowPreview(false)
+    setPreviewImage(null)
+    isPreviewingRef.current = false
+  }
+
   // 鼠标按下事件处理
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    isDraggingRef.current = true // 设置拖拽状态
+    if (isPreviewingRef.current || showPreview) return
+
+    // 记录鼠标按下位置
+    mouseDownPosRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+    }
+    lastMousePosRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+    }
+    lastTimeRef.current = Date.now()
+
+    // 检查是否点击了图片
+    const clickedImage = getClickedImage(e.clientX, e.clientY)
+    if (clickedImage) {
+      // 记录点击的图片
+      clickedImageRef.current = clickedImage
+    }
+
+    // 设置拖拽状态
+    isDraggingRef.current = true
     startPosRef.current = {
       x: e.clientX - targetOffsetRef.current.x,
       y: e.clientY - targetOffsetRef.current.y,
@@ -435,7 +590,24 @@ export default function Home() {
 
   // 鼠标移动事件处理
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDraggingRef.current) return // 如果不在拖拽状态，则返回
+    if (!isDraggingRef.current || isPreviewingRef.current || showPreview) return // 如果不在拖拽状态，则返回
+
+    // 计算速度
+    const now = Date.now()
+    const deltaTime = now - lastTimeRef.current
+    if (deltaTime > 0) {
+      velocityRef.current = {
+        x: (e.clientX - lastMousePosRef.current.x) / deltaTime * 16,
+        y: (e.clientY - lastMousePosRef.current.y) / deltaTime * 16,
+      }
+    }
+
+    // 更新上一帧位置和时间
+    lastMousePosRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+    }
+    lastTimeRef.current = now
 
     // 更新目标偏移量
     targetOffsetRef.current = {
@@ -445,18 +617,63 @@ export default function Home() {
   }
 
   // 鼠标释放事件处理
-  const handleMouseUp = () => {
-    isDraggingRef.current = false // 结束拖拽状态
+  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isPreviewingRef.current || showPreview) return
+    
+    // 如果正在拖拽，则结束拖拽状态
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false
+
+      // 检查是否有点击的图片
+      if (clickedImageRef.current) {
+        // 计算鼠标移动距离
+        const dx = e.clientX - mouseDownPosRef.current.x
+        const dy = e.clientY - mouseDownPosRef.current.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+
+        // 如果移动距离小于阈值，则视为点击
+        if (distance < 5) {
+          handleImageClick(e.clientX, e.clientY)
+        }
+
+        // 清除点击的图片引用
+        clickedImageRef.current = null
+      }
+    }
   }
 
   // 鼠标离开事件处理
   const handleMouseLeave = () => {
+    if (isPreviewingRef.current || showPreview) return
+    
     isDraggingRef.current = false // 结束拖拽状态
+    clickedImageRef.current = null // 清除点击的图片引用
   }
 
   // 触摸事件处理
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (isPreviewingRef.current || showPreview) return
+
     if (e.touches.length === 1) { // 单指触摸
+      // 记录触摸起始位置
+      mouseDownPosRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      }
+      lastMousePosRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      }
+      lastTimeRef.current = Date.now()
+
+      // 检查是否点击了图片
+      const clickedImage = getClickedImage(e.touches[0].clientX, e.touches[0].clientY)
+      if (clickedImage) {
+        // 记录点击的图片
+        clickedImageRef.current = clickedImage
+      }
+
+      // 设置拖拽状态
       isDraggingRef.current = true
       startPosRef.current = {
         x: e.touches[0].clientX - targetOffsetRef.current.x,
@@ -467,7 +684,24 @@ export default function Home() {
 
   // 触摸移动事件处理
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDraggingRef.current || e.touches.length !== 1) return
+    if (!isDraggingRef.current || isPreviewingRef.current || showPreview || e.touches.length !== 1) return
+
+    // 计算速度
+    const now = Date.now()
+    const deltaTime = now - lastTimeRef.current
+    if (deltaTime > 0) {
+      velocityRef.current = {
+        x: (e.touches[0].clientX - lastMousePosRef.current.x) / deltaTime * 16,
+        y: (e.touches[0].clientY - lastMousePosRef.current.y) / deltaTime * 16,
+      }
+    }
+
+    // 更新上一帧位置和时间
+    lastMousePosRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    }
+    lastTimeRef.current = now
 
     // 更新目标偏移量
     targetOffsetRef.current = {
@@ -479,8 +713,30 @@ export default function Home() {
   }
 
   // 触摸结束事件处理
-  const handleTouchEnd = () => {
-    isDraggingRef.current = false
+  const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (isPreviewingRef.current || showPreview) return
+    
+    // 如果正在拖拽，则结束拖拽状态
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false
+
+      // 检查是否有点击的图片
+      if (clickedImageRef.current && e.changedTouches.length > 0) {
+        // 计算触摸移动距离
+        const dx = e.changedTouches[0].clientX - mouseDownPosRef.current.x
+        const dy = e.changedTouches[0].clientY - mouseDownPosRef.current.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+
+        // 如果移动距离小于阈值，则视为点击
+        if (distance < 5) {
+          handleImageClick(e.changedTouches[0].clientX, e.changedTouches[0].clientY)
+        }
+
+        // 清除点击的图片引用
+        clickedImageRef.current = null
+      }
+    }
+
     // 检查是否需要生成更多图片
     checkAndGenerateMoreImages()
   }
@@ -493,18 +749,28 @@ export default function Home() {
           <p className="text-xl">加载中...</p>
         </div>
       ) : (
-        // 画布
-        <canvas
-          ref={canvasRef}
-          className={`h-full w-full ${isDraggingRef.current ? "cursor-grabbing" : "cursor-grab"}`}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        />
+        <>
+          {/* 画布 */}
+          <canvas
+            ref={canvasRef}
+            className={`h-full w-full ${isDraggingRef.current ? "cursor-grabbing" : "cursor-grab"}`}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          />
+          
+          {/* 图片预览组件 */}
+          {showPreview && previewImage && (
+            <ImagePreview
+              image={previewImage}
+              onClose={handleClosePreview}
+            />
+          )}
+        </>
       )}
     </main>
   )
