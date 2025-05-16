@@ -3,6 +3,8 @@
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import ImagePreview from "./components/ImagePreview"
+import ConveyorBelt from "./components/ConveyorBelt"
+import gsap from "gsap"
 
 export default function Home() {
   // Canvas 相关引用
@@ -46,6 +48,12 @@ export default function Home() {
   const [previewImage, setPreviewImage] = useState<PreviewImageType | null>(null)
   const [showPreview, setShowPreview] = useState(false)
   const isPreviewingRef = useRef(false) // 是否正在预览中（动画进行中）
+
+  // 长按相关状态
+  const [isLongPressing, setIsLongPressing] = useState(false)
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const longPressThreshold = 500 // 长按阈值（毫秒）
+  const scaleRef = useRef(1) // 缩放比例
 
   // 定义 Pixabay 图片类型
   type PixabayImage = {
@@ -558,7 +566,53 @@ export default function Home() {
     isPreviewingRef.current = false
   }
 
-  // 鼠标按下事件处理
+  // 处理长按开始
+  const handleLongPressStart = () => {
+    if (isPreviewingRef.current || showPreview) return
+
+    longPressTimerRef.current = setTimeout(() => {
+      setIsLongPressing(true)
+      // 使用 GSAP 实现缩放动画
+      gsap.to(scaleRef, {
+        current: 0.95,
+        duration: 0.3,
+        ease: 'power2.out',
+        onUpdate: () => {
+          // 更新画布缩放
+          const canvas = canvasRef.current
+          if (canvas) {
+            canvas.style.transform = `scale(${scaleRef.current})`
+          }
+        }
+      })
+    }, longPressThreshold)
+  }
+
+  // 处理长按结束
+  const handleLongPressEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current)
+    }
+    
+    if (isLongPressing) {
+      setIsLongPressing(false)
+      // 恢复原始缩放
+      gsap.to(scaleRef, {
+        current: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+        onUpdate: () => {
+          // 更新画布缩放
+          const canvas = canvasRef.current
+          if (canvas) {
+            canvas.style.transform = `scale(${scaleRef.current})`
+          }
+        }
+      })
+    }
+  }
+
+  // 修改鼠标按下事件处理
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (isPreviewingRef.current || showPreview) return
 
@@ -586,6 +640,9 @@ export default function Home() {
       x: e.clientX - targetOffsetRef.current.x,
       y: e.clientY - targetOffsetRef.current.y,
     }
+
+    // 开始长按检测
+    handleLongPressStart()
   }
 
   // 鼠标移动事件处理
@@ -616,9 +673,12 @@ export default function Home() {
     }
   }
 
-  // 鼠标释放事件处理
+  // 修改鼠标释放事件处理
   const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (isPreviewingRef.current || showPreview) return
+    
+    // 结束长按检测
+    handleLongPressEnd()
     
     // 如果正在拖拽，则结束拖拽状态
     if (isDraggingRef.current) {
@@ -642,15 +702,18 @@ export default function Home() {
     }
   }
 
-  // 鼠标离开事件处理
+  // 修改鼠标离开事件处理
   const handleMouseLeave = () => {
     if (isPreviewingRef.current || showPreview) return
+    
+    // 结束长按检测
+    handleLongPressEnd()
     
     isDraggingRef.current = false // 结束拖拽状态
     clickedImageRef.current = null // 清除点击的图片引用
   }
 
-  // 触摸事件处理
+  // 修改触摸事件处理
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     if (isPreviewingRef.current || showPreview) return
 
@@ -679,6 +742,9 @@ export default function Home() {
         x: e.touches[0].clientX - targetOffsetRef.current.x,
         y: e.touches[0].clientY - targetOffsetRef.current.y,
       }
+
+      // 开始长按检测
+      handleLongPressStart()
     }
   }
 
@@ -712,9 +778,12 @@ export default function Home() {
     e.preventDefault() // 防止页面滚动
   }
 
-  // 触摸结束事件处理
+  // 修改触摸结束事件处理
   const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
     if (isPreviewingRef.current || showPreview) return
+    
+    // 结束长按检测
+    handleLongPressEnd()
     
     // 如果正在拖拽，则结束拖拽状态
     if (isDraggingRef.current) {
@@ -754,6 +823,7 @@ export default function Home() {
           <canvas
             ref={canvasRef}
             className={`h-full w-full ${isDraggingRef.current ? "cursor-grabbing" : "cursor-grab"}`}
+            style={{ transformOrigin: 'center center' }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -770,6 +840,9 @@ export default function Home() {
               onClose={handleClosePreview}
             />
           )}
+
+          {/* 传送带边框组件 */}
+          <ConveyorBelt isActive={isLongPressing} />
         </>
       )}
     </main>
