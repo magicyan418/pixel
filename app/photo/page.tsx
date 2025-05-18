@@ -574,7 +574,7 @@ export default function Home() {
       setIsLongPressing(true)
       // 使用 GSAP 实现缩放动画
       gsap.to(scaleRef, {
-        current: 0.95,
+        current: 0.94,
         duration: 0.3,
         ease: 'power2.out',
         onUpdate: () => {
