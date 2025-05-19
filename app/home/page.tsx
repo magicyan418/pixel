@@ -2,7 +2,7 @@
  * @Author: 严钦蓝
  * @FilePath: \pixel\app\home\page.tsx
  * @LastEditors: 严钦蓝
- * @LastEditTime: 2025-05-08 17:53:03
+ * @LastEditTime: 2025-05-19 10:54:52
  * @Description:
  */
 "use client";
@@ -154,6 +154,8 @@ const PromptingIsAllYouNeed = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // 预加载terminal页面
+    router.push("/terminal");
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -450,39 +452,35 @@ const PromptingIsAllYouNeed = () => {
       }}
       aria-label="Prompting Is All You Need: Fullscreen Pong game with pixel text"
     />
-      <div className="fixed right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-[50px]">
-      <BlackHoleButton 
-        buttonText="Get Started" 
+      <div className="flex justify-center items-end h-screen pb-10">
+      <BlackHoleButton
+        buttonText="启动！" 
         intensity={1.3} 
         duration={6000} 
         onClick={() => {
           const canvas = canvasRef.current;
           if(canvas) {
-            // 创建时间轴动画
             const tl = gsap.timeline({
               onComplete: () => {
                 router.push("/terminal");
               }
             });
             
-            // 先添加透明度动画到0.6
             tl.to(canvas, {
               opacity: 0.7,
               duration: .6,
               ease: "power2.out"
             })
-            // 添加圆形收缩动画
             .to(canvas, {
-              clipPath: "circle(0% at center)",
+              clipPath: "circle(0% at 50% 50%)",
               duration: 3.5,
               ease: "power2.inOut"
             })
-            // 最后完全透明
             .to(canvas, {
               opacity: 0,
               duration: .5,
               ease: "power2.inOut"
-            }, "-=0.5"); // 让最后的透明度动画在收缩动画结束前0.5秒开始
+            }, "-=0.5");
           }
         }} 
       />

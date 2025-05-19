@@ -111,55 +111,53 @@ export default function BlackHoleButton({
   const lensRays = useRef<GravitationalLensRay[]>([])
 
   // Initialize Canvas
+  // 初始化画布
   const initCanvas = () => {
     if (!canvasRef.current || !containerRef.current) {
-      console.error("Canvas or container ref is null")
+      console.error("画布或容器引用为空")
       return
     }
-
+  
     const canvas = canvasRef.current
     const container = containerRef.current
-
-    // Set Canvas size to twice the window size to cover a larger area
+  
+    // 设置画布大小为窗口的两倍以覆盖更大区域
     canvas.width = window.innerWidth * 2
     canvas.height = window.innerHeight * 2
-
+  
     canvas.style.width = `${window.innerWidth}px`
     canvas.style.height = `${window.innerHeight}px`
     canvas.style.position = "fixed"
     canvas.style.left = "50%"
     canvas.style.top = "50%"
     canvas.style.transform = "translate(-50%, -50%)"
-    canvas.style.zIndex = "50" // Ensure it's above other elements
+    canvas.style.zIndex = "50" // 确保在其他元素之上
     canvas.style.pointerEvents = "none"
-
-    // Get rendering context
+  
+    // 获取渲染上下文
     ctxRef.current = canvas.getContext("2d")
-
+  
     if (!ctxRef.current) {
-      console.error("Failed to get canvas context")
+      console.error("获取画布上下文失败")
       return
     }
-
-    // Set black hole center position to button center
+  
+    // 设置黑洞中心位置为屏幕中心
+    center.current.x = canvas.width / 2
+    center.current.y = canvas.height / 2
+  
+    // 记录按钮大小用于黑洞初始大小
     if (buttonRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect()
-      const buttonCenterX = buttonRect.left + buttonRect.width / 2
-      const buttonCenterY = buttonRect.top + buttonRect.height / 2
-
-      // Convert button center position to canvas coordinates
-      center.current.x = buttonCenterX * 2 // Because canvas width is twice the window
-      center.current.y = buttonCenterY * 2 // Because canvas height is twice the window
-
-      // Record button size for later use in transforming button to black hole
+      
       buttonSize.current.width = buttonRect.width * 2
       buttonSize.current.height = buttonRect.height * 2
-
-      console.log("Button center:", buttonCenterX, buttonCenterY)
-      console.log("Canvas center:", center.current.x, center.current.y)
-      console.log("Button size:", buttonSize.current.width, buttonSize.current.height)
+  
+      console.log("屏幕中心:", window.innerWidth / 2, window.innerHeight / 2)
+      console.log("画布中心:", center.current.x, center.current.y)
+      console.log("按钮大小:", buttonSize.current.width, buttonSize.current.height)
     } else {
-      console.error("Button ref is null")
+      console.error("按钮引用为空")
     }
   }
 
