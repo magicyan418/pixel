@@ -4,6 +4,7 @@ import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import ImagePreview from "./components/ImagePreview"
 import ConveyorBelt from "./components/ConveyorBelt"
+import HandLoading from "@/components/HandLoading"
 import gsap from "gsap"
 
 export default function Home() {
@@ -88,16 +89,15 @@ export default function Home() {
 
   // 获取 Pixabay 图片
   useEffect(() => {
+    setIsLoading(true)
     const fetchPixabayImages = async () => {
       try {
-        setIsLoading(true)
         // 调用 Pixabay API 获取图片
         const response = await fetch(
           "https://pixabay.com/api/?key=50283552-f0300aed1a542b4b8eeccbebe&q=art&min_width=300&min_height=400&editors_choice=true&per_page=30"
         )
         const data = await response.json()
         setPixabayImages(data.hits)
-        
         // 初始化可用图片索引数组
         availableImageIndicesRef.current = Array.from({ length: data.hits.length }, (_, i) => i)
         // 打乱数组顺序
@@ -107,7 +107,9 @@ export default function Home() {
           [availableImageIndicesRef.current[j], availableImageIndicesRef.current[i]];
         }
         
-        setIsLoading(false)
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 5000)
       } catch (error) {
         console.error("获取 Pixabay 图片失败:", error)
         setIsLoading(false)
@@ -199,8 +201,8 @@ export default function Home() {
 
         // 应用阻尼
         velocityRef.current = {
-          x: velocityRef.current.x * 0.75,
-          y: velocityRef.current.y * 0.75,
+          x: velocityRef.current.x * 0.95,
+          y: velocityRef.current.y * 0.95,
         }
       }
 
@@ -815,7 +817,7 @@ export default function Home() {
       {isLoading ? (
         // 加载状态显示
         <div className="flex h-full w-full items-center justify-center text-white">
-          <p className="text-xl">加载中...</p>
+          <HandLoading />
         </div>
       ) : (
         <>
