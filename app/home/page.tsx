@@ -1,10 +1,3 @@
-/*
- * @Author: 严钦蓝
- * @FilePath: \pixel\app\home\page.tsx
- * @LastEditors: 严钦蓝
- * @LastEditTime: 2025-05-19 10:54:52
- * @Description:
- */
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -155,7 +148,7 @@ const PromptingIsAllYouNeed = () => {
 
   useEffect(() => {
     // 预加载terminal页面
-    router.push("/terminal");
+    router.prefetch("/terminal");
     const canvas = canvasRef.current;
     if (!canvas) return;
 
