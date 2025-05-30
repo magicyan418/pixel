@@ -2,48 +2,35 @@
 const COMMANDS = {
   HELP: "help",
   CLEAR: "clear",
-  OPEN: "open",
-  ECHO: "echo",
-  DATE: "date",
-  HISTORY: "history",
-  ABOUT: "about",
-  LS: "ls",
-  CD: "cd",
-  PWD: "pwd",
-  WHOAMI: "whoami",
-  GITHUB: "github",
-  LINKEDIN: "linkedin",
-  PORTFOLIO: "portfolio",
+  SHOWIMAGE: "showimage",
+  ROUTES: "routes",
+  GOTO: "goto",
+  IPCARD: "ipcard",
 }
 
 // Command descriptions for help
 const COMMAND_DESCRIPTIONS = {
-  [COMMANDS.HELP]: "Show available commands",
-  [COMMANDS.CLEAR]: "Clear the terminal screen",
-  [COMMANDS.OPEN]: "Open a URL in a new tab (usage: open https://example.com)",
-  [COMMANDS.ECHO]: "Display a line of text (usage: echo Hello World)",
-  [COMMANDS.DATE]: "Display the current date and time",
-  [COMMANDS.HISTORY]: "Show command history (not implemented yet)",
-  [COMMANDS.ABOUT]: "About this terminal",
-  [COMMANDS.LS]: "List directory contents (simulated)",
-  [COMMANDS.CD]: "Change directory (simulated)",
-  [COMMANDS.PWD]: "Print working directory (simulated)",
-  [COMMANDS.WHOAMI]: "Display current user",
-  [COMMANDS.GITHUB]: "Open GitHub profile",
-  [COMMANDS.LINKEDIN]: "Open LinkedIn profile",
-  [COMMANDS.PORTFOLIO]: "Open portfolio website",
+  [COMMANDS.HELP]: "显示可用命令",
+  [COMMANDS.CLEAR]: "清除终端屏幕",
+  [COMMANDS.SHOWIMAGE]: "显示图片 (用法: showimage <图片名称>)",
+  [COMMANDS.ROUTES]: "显示所有可用路由",
+  [COMMANDS.GOTO]: "跳转到指定路由 (用法: goto <路由名称>)",
+  [COMMANDS.IPCARD]: "显示IP签名档",
 }
 
-// Simulated file system
-const FILE_SYSTEM = {
-  "/": ["home", "projects", "about.txt"],
-  "/home": ["documents", "pictures"],
-  "/projects": ["web-terminal", "portfolio", "blog"],
-  "/home/documents": ["resume.pdf", "notes.txt"],
+// 可用路由
+const AVAILABLE_ROUTES = {
+  "home": "/home",
+  "terminal": "/terminal",
+  "photo": "/photo",
 }
 
-// Current directory (simulated)
-let currentDir = "/"
+// 可用图片
+const AVAILABLE_IMAGES = {
+  "robot": "https://images.unsplash.com/photo-1535378917042-10a22c95931a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1936&q=80",
+  "terminal": "https://images.unsplash.com/photo-1629654297299-c8506221ca97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
+  "pixel": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+}
 
 /**
  * Execute a command and return the result
@@ -63,44 +50,23 @@ export function executeCommand(commandInput: string): string {
       }
       return ""
 
-    case COMMANDS.OPEN:
-      return openUrl(params[0])
+    case COMMANDS.SHOWIMAGE:
+      return showImage(params[0])
 
-    case COMMANDS.ECHO:
-      return params.join(" ")
+    case COMMANDS.ROUTES:
+      return listRoutes()
 
-    case COMMANDS.DATE:
-      return new Date().toString()
-
-    case COMMANDS.ABOUT:
-      return "Web Terminal v1.0.0\nA Next.js project that simulates a Linux terminal.\nYou can use it to navigate to websites or execute commands."
-
-    case COMMANDS.LS:
-      return listDirectory(params[0])
-
-    case COMMANDS.CD:
-      return changeDirectory(params[0])
-
-    case COMMANDS.PWD:
-      return currentDir
-
-    case COMMANDS.WHOAMI:
-      return "user"
-
-    case COMMANDS.GITHUB:
-      return openUrl("https://github.com")
-
-    case COMMANDS.LINKEDIN:
-      return openUrl("https://linkedin.com")
-
-    case COMMANDS.PORTFOLIO:
-      return openUrl("https://example.com/portfolio")
+    case COMMANDS.GOTO:
+      return gotoRoute(params[0])
+      
+    case COMMANDS.IPCARD:
+      return showIpCard()
 
     default:
       if (command === "") {
         return ""
       }
-      return `Command not found: ${command}. Type 'help' to see available commands.`
+      return `命令未找到: ${command}. 输入 'help' 查看可用命令.`
   }
 }
 
@@ -108,7 +74,7 @@ export function executeCommand(commandInput: string): string {
  * Generate help text with available commands
  */
 function getHelpText(): string {
-  let helpText = "Available commands:\n\n"
+  let helpText = "可用命令:\n\n"
 
   Object.entries(COMMAND_DESCRIPTIONS).forEach(([command, description]) => {
     helpText += `${command.padEnd(10)} - ${description}\n`
@@ -118,81 +84,62 @@ function getHelpText(): string {
 }
 
 /**
- * Open a URL in a new tab
+ * Show an image
  */
-function openUrl(url: string): string {
-  if (!url) {
-    return "Error: URL is required (usage: open https://example.com)"
+function showImage(imageName: string): string {
+  if (!imageName) {
+    return `错误: 需要图片名称 (用法: showimage <图片名称>)\n可用图片: ${Object.keys(AVAILABLE_IMAGES).join(", ")}`
   }
 
-  // Add https:// if not present
-  if (!url.startsWith("http://") && !url.startsWith("https://")) {
-    url = "https://" + url
+  const imageUrl = AVAILABLE_IMAGES[imageName as keyof typeof AVAILABLE_IMAGES]
+  
+  if (!imageUrl) {
+    return `错误: 图片 '${imageName}' 不存在\n可用图片: ${Object.keys(AVAILABLE_IMAGES).join(", ")}`
   }
 
-  try {
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank", "noopener,noreferrer")
-      return `Opening ${url} in a new tab...`
-    }
-    return `Cannot open ${url} (browser environment not available)`
-  } catch (error) {
-    return `Error opening ${url}: ${error}`
-  }
+  // 返回HTML图片标签，Terminal组件需要支持HTML渲染
+  return `<img src="${imageUrl}" alt="${imageName}" style="max-width: 100%; max-height: 300px; margin: 10px 0;" />`
 }
 
 /**
- * List directory contents (simulated)
+ * List all available routes
  */
-function listDirectory(path?: string): string {
-  const targetPath = path ? resolvePath(path) : currentDir
-
-  if (!(targetPath in FILE_SYSTEM)) {
-    return `ls: cannot access '${targetPath}': No such file or directory`
-  }
-
-  return FILE_SYSTEM[targetPath as keyof typeof FILE_SYSTEM].join("  ")
+function listRoutes(): string {
+  let routesText = "可用路由:\n\n"
+  
+  Object.entries(AVAILABLE_ROUTES).forEach(([name, path]) => {
+    routesText += `${name.padEnd(10)} - ${path}\n`
+  })
+  
+  return routesText
 }
 
 /**
- * Change directory (simulated)
+ * Navigate to a route
  */
-function changeDirectory(path?: string): string {
-  if (!path) {
-    currentDir = "/"
-    return ""
+function gotoRoute(routeName: string): string {
+  if (!routeName) {
+    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${Object.keys(AVAILABLE_ROUTES).join(", ")}`
   }
 
-  const targetPath = resolvePath(path)
-
-  if (!FILE_SYSTEM[targetPath as keyof typeof FILE_SYSTEM] && targetPath !== "/") {
-    return `cd: no such directory: ${path}`
+  const routePath = AVAILABLE_ROUTES[routeName as keyof typeof AVAILABLE_ROUTES]
+  
+  if (!routePath) {
+    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${Object.keys(AVAILABLE_ROUTES).join(", ")}`
   }
 
-  currentDir = targetPath
-  return ""
+  if (typeof window !== "undefined") {
+    window.location.href = routePath
+    return `正在跳转到 ${routePath}...`
+  }
+  
+  return `无法跳转到 ${routePath} (浏览器环境不可用)`
 }
 
 /**
- * Resolve a path (simulated)
+ * Show IP card
  */
-function resolvePath(path: string): string {
-  if (path.startsWith("/")) {
-    return path
-  }
-
-  if (path === "..") {
-    const parts = currentDir.split("/").filter(Boolean)
-    if (parts.length === 0) {
-      return "/"
-    }
-    parts.pop()
-    return "/" + parts.join("/")
-  }
-
-  if (path === ".") {
-    return currentDir
-  }
-
-  return currentDir === "/" ? `/${path}` : `${currentDir}/${path}`
+function showIpCard(): string {
+  // 返回一个特殊标记，让页面组件处理
+  return "SPECIAL_COMMAND_IPCARD";
 }

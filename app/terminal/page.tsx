@@ -11,6 +11,8 @@ export default function Home() {
   const [history, setHistory] = useState<CommandHistory[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  // 用于跟踪ipcard命令是否已经执行
+  const ipcardExecutedRef = useRef<boolean>(false);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -24,8 +26,58 @@ export default function Home() {
     // Add command to history
     setHistory((prev) => [...prev, { type: "command", content: command }]);
 
+    // 特殊处理ipcard命令，防止重复渲染
+    if (command.trim().toLowerCase() === "ipcard") {
+      if (!ipcardExecutedRef.current) {
+        ipcardExecutedRef.current = true;
+        
+        // 生成一个固定的缓存URL
+        const today = new Date().toISOString().split('T')[0];
+        const timestamp = Date.now(); // 添加时间戳确保每次都是新图片
+        const ipCardUrl = `https://api.oick.cn/api/netcard?_t=${timestamp}&_cache=${today}`;
+        
+        // 添加结果到历史记录，使用img标签以便SafeHTML组件能够提取并使用ImageContent组件渲染
+        setTimeout(() => {
+          setHistory((prev) => [
+            ...prev, 
+            { 
+              type: "response", 
+              content: `<img src="${ipCardUrl}" alt="IP签名档" />` 
+            }
+          ]);
+        }, 300);
+        
+        return;
+      } else {
+        // 如果已经执行过，提示用户
+        setTimeout(() => {
+          setHistory((prev) => [
+            ...prev, 
+            { 
+              type: "response", 
+              content: "IP签名档已经显示在上方。如需刷新，请先清除终端（clear命令）后再试。" 
+            }
+          ]);
+        }, 300);
+        
+        return;
+      }
+    }
+
+    // 如果执行clear命令，重置ipcard执行状态
+    if (command.trim().toLowerCase() === "clear") {
+      ipcardExecutedRef.current = false;
+    }
+
     // Execute command and get result
     const result = executeCommand(command);
+
+    // 处理特殊命令结果
+    if (result === "SPECIAL_COMMAND_IPCARD") {
+      // 这个分支不会执行，因为我们已经在上面处理了ipcard命令
+      // 但为了代码的完整性，我们保留这个检查
+      return;
+    }
 
     // Add result to history
     setTimeout(() => {
@@ -35,6 +87,8 @@ export default function Home() {
 
   const clearHistory = () => {
     setHistory([]);
+    // 重置ipcard执行状态
+    ipcardExecutedRef.current = false;
   };
 
   // Expose clear function to the command executor
@@ -67,7 +121,7 @@ export default function Home() {
             <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-black">
               <div className="w-full max-w-4xl mx-auto">
                 <h1 className="text-2xl font-mono mb-4 gradient-text text-glow text-center font-bold">
-                  Web Terminal
+                  像素终端
                 </h1>
                 <Terminal
                   history={history}
