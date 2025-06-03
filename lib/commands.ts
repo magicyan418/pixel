@@ -25,11 +25,23 @@ const COMMAND_DESCRIPTIONS = {
 };
 
 // 可用路由
-const AVAILABLE_ROUTES = {
-  home: "/home",
-  terminal: "/terminal",
-  photo: "/photo",
-};
+const AVAILABLE_ROUTES = [
+  {
+    name: "home",
+    url: "/home",
+    description: "首页"
+  },
+  {
+    name: "terminal",
+    url: "/terminal",
+    description: "终端"
+  },
+  {
+    name: "photo",
+    url: "/photo",
+    description: "照片墙"
+  }
+];
 
 // 可用工具
 const AVAILABLE_TOOLS = [
@@ -116,10 +128,14 @@ function getHelpText(): string {
 function listRoutes(): string {
   let routesText = "可用路由:\n\n";
 
-  Object.entries(AVAILABLE_ROUTES).forEach(([name, path]) => {
-    routesText += `${name.padEnd(10)} - ${path}\n`;
+  // 计算最长的名称长度，用于对齐
+  const maxNameLength = AVAILABLE_ROUTES.reduce((max, route) => 
+    Math.max(max, route.name.length), 0);
+  
+  AVAILABLE_ROUTES.forEach((route) => {
+    routesText += `${route.name.padEnd(maxNameLength + 2)} - ${route.description}\n`;
   });
-
+  
   return routesText;
 }
 
@@ -128,26 +144,21 @@ function listRoutes(): string {
  */
 function gotoRoute(routeName: string): string {
   if (!routeName) {
-    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${Object.keys(
-      AVAILABLE_ROUTES
-    ).join(", ")}`;
+    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${AVAILABLE_ROUTES.map(r => r.name).join(", ")}`;
   }
 
-  const routePath =
-    AVAILABLE_ROUTES[routeName as keyof typeof AVAILABLE_ROUTES];
+  const route = AVAILABLE_ROUTES.find(r => r.name === routeName);
 
-  if (!routePath) {
-    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${Object.keys(
-      AVAILABLE_ROUTES
-    ).join(", ")}`;
+  if (!route) {
+    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${AVAILABLE_ROUTES.map(r => r.name).join(", ")}`;
   }
 
   if (typeof window !== "undefined") {
-    window.location.href = routePath;
-    return `正在跳转到 ${routePath}...`;
+    window.location.href = route.url;
+    return `正在跳转到 ${route.name} (${route.url})...`;
   }
 
-  return `无法跳转到 ${routePath} (浏览器环境不可用)`;
+  return `无法跳转到 ${route.url} (浏览器环境不可用)`;
 }
 
 /**
