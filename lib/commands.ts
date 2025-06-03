@@ -53,12 +53,12 @@ const AVAILABLE_TOOLS = [
   {
     name: "fileshare",
     description: "文件共享",
-    url: "https://www.wenshushu.cn",
+    url: "https://fileshare.magicyan418.com",
   },
   {
     name: "countdown",
     description: "下班倒计时",
-    url: "https://xiaban.vercel.app",
+    url: "https://countdown.magicyan418.com",
   },
 ];
 
