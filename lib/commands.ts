@@ -1,145 +1,228 @@
-// Available commands
+// 可用命令
 const COMMANDS = {
   HELP: "help",
   CLEAR: "clear",
-  SHOWIMAGE: "showimage",
   ROUTES: "routes",
   GOTO: "goto",
   IPCARD: "ipcard",
-}
+  TOOLS: "tools",
+  RICKROLL: "rickroll",
+  MATRIX: "matrix",
+  COFFEE: "coffee",
+};
 
-// Command descriptions for help
+// 命令描述
 const COMMAND_DESCRIPTIONS = {
   [COMMANDS.HELP]: "显示可用命令",
   [COMMANDS.CLEAR]: "清除终端屏幕",
-  [COMMANDS.SHOWIMAGE]: "显示图片 (用法: showimage <图片名称>)",
   [COMMANDS.ROUTES]: "显示所有可用路由",
   [COMMANDS.GOTO]: "跳转到指定路由 (用法: goto <路由名称>)",
   [COMMANDS.IPCARD]: "显示IP签名档",
-}
+  [COMMANDS.TOOLS]: "显示所有可用工具",
+  [COMMANDS.RICKROLL]: "观看Rick Roll视频(彩蛋)",
+  [COMMANDS.MATRIX]: "开启黑客帝国",
+  [COMMANDS.COFFEE]: "煮个咖啡",
+};
 
 // 可用路由
 const AVAILABLE_ROUTES = {
-  "home": "/home",
-  "terminal": "/terminal",
-  "photo": "/photo",
-}
+  home: "/home",
+  terminal: "/terminal",
+  photo: "/photo",
+};
 
-// 可用图片
-const AVAILABLE_IMAGES = {
-  "robot": "https://images.unsplash.com/photo-1535378917042-10a22c95931a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1936&q=80",
-  "terminal": "https://images.unsplash.com/photo-1629654297299-c8506221ca97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-  "pixel": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-}
+// 可用工具
+const AVAILABLE_TOOLS = [
+  {
+    name: "uuavatar",
+    description: "唯一头像",
+    url: "https://uuavatar.magicyan418.com",
+  },
+  {
+    name: "fileshare",
+    description: "文件共享",
+    url: "https://www.wenshushu.cn",
+  },
+  {
+    name: "countdown",
+    description: "下班倒计时",
+    url: "https://xiaban.vercel.app",
+  },
+];
 
 /**
- * Execute a command and return the result
+ * 执行命令并返回结果
  */
 export function executeCommand(commandInput: string): string {
-  const args = commandInput.trim().split(" ")
-  const command = args[0].toLowerCase()
-  const params = args.slice(1)
+  const args = commandInput.trim().split(" ");
+  const command = args[0].toLowerCase();
+  const params = args.slice(1);
 
   switch (command) {
     case COMMANDS.HELP:
-      return getHelpText()
+      return getHelpText();
 
     case COMMANDS.CLEAR:
       if (typeof window !== "undefined" && window.clearTerminal) {
-        window.clearTerminal()
+        window.clearTerminal();
       }
-      return ""
-
-    case COMMANDS.SHOWIMAGE:
-      return showImage(params[0])
+      return "";
 
     case COMMANDS.ROUTES:
-      return listRoutes()
+      return listRoutes();
 
     case COMMANDS.GOTO:
-      return gotoRoute(params[0])
-      
+      return gotoRoute(params[0]);
+
     case COMMANDS.IPCARD:
-      return showIpCard()
+      return showIpCard();
+
+    case COMMANDS.TOOLS:
+      return listTools();
+
+    case COMMANDS.RICKROLL:
+      return rickRoll();
+
+    case COMMANDS.MATRIX:
+      return matrixEffect();
+
+    case COMMANDS.COFFEE:
+      return brewCoffee();
 
     default:
       if (command === "") {
-        return ""
+        return "";
       }
-      return `命令未找到: ${command}. 输入 'help' 查看可用命令.`
+      return `命令未找到: ${command}. 输入 'help' 查看可用命令.`;
   }
 }
 
 /**
- * Generate help text with available commands
+ * 生成可用命令的帮助文本
  */
 function getHelpText(): string {
-  let helpText = "可用命令:\n\n"
+  let helpText = "可用命令:\n\n";
 
   Object.entries(COMMAND_DESCRIPTIONS).forEach(([command, description]) => {
-    helpText += `${command.padEnd(10)} - ${description}\n`
-  })
+    helpText += `${command.padEnd(10)} - ${description}\n`;
+  });
 
-  return helpText
+  return helpText;
 }
 
 /**
- * Show an image
- */
-function showImage(imageName: string): string {
-  if (!imageName) {
-    return `错误: 需要图片名称 (用法: showimage <图片名称>)\n可用图片: ${Object.keys(AVAILABLE_IMAGES).join(", ")}`
-  }
-
-  const imageUrl = AVAILABLE_IMAGES[imageName as keyof typeof AVAILABLE_IMAGES]
-  
-  if (!imageUrl) {
-    return `错误: 图片 '${imageName}' 不存在\n可用图片: ${Object.keys(AVAILABLE_IMAGES).join(", ")}`
-  }
-
-  // 返回HTML图片标签，Terminal组件需要支持HTML渲染
-  return `<img src="${imageUrl}" alt="${imageName}" style="max-width: 100%; max-height: 300px; margin: 10px 0;" />`
-}
-
-/**
- * List all available routes
+ * 显示所有可用路由
  */
 function listRoutes(): string {
-  let routesText = "可用路由:\n\n"
-  
+  let routesText = "可用路由:\n\n";
+
   Object.entries(AVAILABLE_ROUTES).forEach(([name, path]) => {
-    routesText += `${name.padEnd(10)} - ${path}\n`
-  })
-  
-  return routesText
+    routesText += `${name.padEnd(10)} - ${path}\n`;
+  });
+
+  return routesText;
 }
 
 /**
- * Navigate to a route
+ * 跳转到指定路由
  */
 function gotoRoute(routeName: string): string {
   if (!routeName) {
-    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${Object.keys(AVAILABLE_ROUTES).join(", ")}`
+    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${Object.keys(
+      AVAILABLE_ROUTES
+    ).join(", ")}`;
   }
 
-  const routePath = AVAILABLE_ROUTES[routeName as keyof typeof AVAILABLE_ROUTES]
-  
+  const routePath =
+    AVAILABLE_ROUTES[routeName as keyof typeof AVAILABLE_ROUTES];
+
   if (!routePath) {
-    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${Object.keys(AVAILABLE_ROUTES).join(", ")}`
+    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${Object.keys(
+      AVAILABLE_ROUTES
+    ).join(", ")}`;
   }
 
   if (typeof window !== "undefined") {
-    window.location.href = routePath
-    return `正在跳转到 ${routePath}...`
+    window.location.href = routePath;
+    return `正在跳转到 ${routePath}...`;
   }
-  
-  return `无法跳转到 ${routePath} (浏览器环境不可用)`
+
+  return `无法跳转到 ${routePath} (浏览器环境不可用)`;
 }
 
 /**
- * Show IP card
+ * 显示IP签名档
  */
 function showIpCard(): string {
   // 返回一个特殊标记，让页面组件处理
   return "SPECIAL_COMMAND_IPCARD";
+}
+
+/**
+ * 显示所有可用工具
+ */
+function listTools(): string {
+  let toolsText =
+    "<span class='gradient-text-gold'>可用工具: (Ctrl+点击名称访问)</span>\n\n";
+
+  // 计算最长的名称长度，用于对齐
+  const maxNameLength = AVAILABLE_TOOLS.reduce(
+    (max, tool) => Math.max(max, tool.name.length),
+    0
+  );
+
+  // 使用等宽字符确保对齐
+  AVAILABLE_TOOLS.forEach((tool) => {
+    // 将下划线只应用于名称本身
+    toolsText += `<a href="${tool.url}" target="_blank"><u>${
+      tool.name
+    }</u></a>${" ".repeat(
+      maxNameLength - tool.name.length + 2
+    )}  <span class="gradient-text-gold">-  ${tool.description}</span>\n`;
+  });
+
+  return toolsText;
+}
+
+/**
+ *  跳转到 Rick Roll 视频
+ */
+function rickRoll(): string {
+  if (typeof window !== "undefined") {
+    // 打开一个新的标签
+    window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+    return "正在加载惊喜...";
+  }
+
+  return "无法执行命令 (浏览器环境不可用)";
+}
+
+/**
+ * 黑客帝国效果 -- 数字雨
+ */
+function matrixEffect(): string {
+  if (typeof window !== "undefined") {
+    // 返回特殊标记，让页面组件处理
+    return "SPECIAL_COMMAND_MATRIX";
+  }
+
+  return "无法执行命令 (浏览器环境不可用)";
+}
+
+/**
+ * 煮咖啡
+ */
+function brewCoffee(): string {
+  return `
+<span class="gradient-text-gold">正在煮咖啡...</span>
+
+      ( (
+       ) )
+    .______.
+    |      |]
+    \\      /
+     \`----'
+
+<span style="color: #ff6b6b;">错误：我是终端，不是咖啡机</span>
+`;
 }

@@ -10,12 +10,29 @@ interface TerminalProps {
   onCommand: (command: string) => void
 }
 
-// 创建一个缓存对象，用于存储已经加载的图片内容
-const imageCache: Record<string, boolean> = {};
-
 // 专门用于处理图片内容的组件
 const ImageContent = memo(({ src, alt }: { src: string; alt: string }) => {
-  return <img src={src} alt={alt} style={{ maxWidth: '100%', margin: '10px 0' }} />;
+  const terminalContentRef = useRef<HTMLDivElement | null>(null);
+  
+  // 在组件挂载时获取最外层的 terminalContentRef
+  useEffect(() => {
+    // 查找最近的带有 terminal-scrollbar 类的父元素
+    let parent = document.querySelector('.terminal-scrollbar') as HTMLDivElement;
+    if (parent) {
+      terminalContentRef.current = parent;
+    }
+  }, []);
+  
+  // 图片加载完成后滚动到底部
+  const handleImageLoad = () => {
+    if (terminalContentRef.current) {
+      setTimeout(() => {
+        terminalContentRef.current!.scrollTop = terminalContentRef.current!.scrollHeight;
+      }, 50);
+    }
+  };
+  
+  return <img src={src} alt={alt} style={{ maxWidth: '100%', margin: '10px 0' }} onLoad={handleImageLoad} />;
 });
 
 ImageContent.displayName = "ImageContent";
@@ -38,14 +55,64 @@ const SafeHTML = memo(({ html }: { html: string }) => {
     }
   }
   
-  // 如果不是图片或无法提取图片信息，使用普通HTML渲染
+  // 处理链接交互
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.innerHTML = html;
+      
+      // 为所有链接添加事件处理
+      const links = contentRef.current.querySelectorAll('a');
+      let isCtrlPressed = false;
+      
+      // 监听 Ctrl 键状态
+      const handleKeyDown = (e: KeyboardEvent) => {
+        console.log(e.key,e.ctrlKey,'1111')
+        if (e.key === 'Control') {
+          isCtrlPressed = true;
+          // 更新所有链接的鼠标样式
+          links.forEach(link => {
+            link.style.cursor = 'pointer';
+          });
+        }
+      };
+      
+      const handleKeyUp = (e: KeyboardEvent) => {
+        if (e.key === 'Control') {
+          isCtrlPressed = false;
+          // 更新所有链接的鼠标样式
+          links.forEach(link => {
+            link.style.cursor = 'default';
+          });
+        }
+      };
+      
+      // 为链接添加点击事件
+      links.forEach(link => {
+        // 设置初始鼠标样式
+        link.style.cursor = 'default';
+        
+        link.addEventListener('click', (e) => {
+          // 只有按住 Ctrl 键时才允许点击
+          if (!isCtrlPressed) {
+            e.preventDefault();
+            alert('请按住 Ctrl 键并点击链接以访问');
+          }
+        });
+      });
+      
+      // 添加全局键盘事件监听
+      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keyup', handleKeyUp);
+      
+      // 清理函数
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
+      };
     }
   }, [html]);
   
-  return <div ref={contentRef} className="html-content" />;
+  return <div ref={contentRef} className="html-content terminal-links text-white" />;
 });
 
 SafeHTML.displayName = "SafeHTML";
@@ -104,6 +171,13 @@ const Terminal = forwardRef(({ history, onCommand }: TerminalProps, ref: Forward
   useEffect(() => {
     if (terminalContentRef.current) {
       terminalContentRef.current.scrollTop = terminalContentRef.current.scrollHeight
+      
+      // 添加额外的延迟滚动，确保在图片加载后也能滚动到底部
+      setTimeout(() => {
+        if (terminalContentRef.current) {
+          terminalContentRef.current.scrollTop = terminalContentRef.current.scrollHeight
+        }
+      }, 300)
     }
   }, [history])
 
@@ -156,11 +230,11 @@ const Terminal = forwardRef(({ history, onCommand }: TerminalProps, ref: Forward
                 </span>
               </div>
             ) : (
-              <div className="whitespace-pre-wrap ml-2 gradient-text-gold">
+              <div className="whitespace-pre-wrap ml-2">
                 {containsHTML(item.content) ? (
                   <SafeHTML html={item.content} />
                 ) : (
-                  item.content
+                  <span className="gradient-text-gold">{item.content}</span>
                 )}
               </div>
             )}

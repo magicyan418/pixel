@@ -48,12 +48,12 @@ input.terminal-cursor {
 }
 
 .terminal-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 170, 0.5);
+  background: #00ffaa80;
   border-radius: 3px;
 }
 
 .terminal-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 170, 0.8);
+  background: #00ffaacc;
 }
 
 /* Gradient text effects */
@@ -62,7 +62,6 @@ input.terminal-cursor {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
 
 .gradient-text-blue {
@@ -70,7 +69,6 @@ input.terminal-cursor {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
 
 .gradient-text-purple {
@@ -78,7 +76,6 @@ input.terminal-cursor {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
 
 .gradient-text-gold {
@@ -86,20 +83,19 @@ input.terminal-cursor {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
 
 /* Terminal window effects */
 .terminal-window {
   background: rgba(10, 10, 10, 0.95);
-  border: 1px solid rgba(0, 255, 170, 0.3);
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.2), 0 0 30px rgba(0, 255, 170, 0.1);
+  border: 1px solid #00ffaa4d;
+  box-shadow: 0 0 15px #00ffaa33, 0 0 30px #00ffaa1a;
   backdrop-filter: blur(10px);
 }
 
 .terminal-header {
   background: linear-gradient(90deg, #111111 0%, #222222 100%);
-  border-bottom: 1px solid rgba(0, 255, 170, 0.3);
+  border-bottom: 1px solid #00ffaa4d;
 }
 
 .terminal-button {
@@ -139,14 +135,68 @@ input.terminal-cursor {
 
 /* Glow effect */
 .text-glow {
-  text-shadow: 0 0 5px rgba(0, 255, 170, 0.5);
+  text-shadow: 0 0 5px #00ffaa80;
 }
 
 .text-glow-blue {
-  text-shadow: 0 0 5px rgba(0, 198, 255, 0.5);
+  text-shadow: 0 0 5px #00c6ff80;
 }
 
 .text-glow-purple {
-  text-shadow: 0 0 5px rgba(218, 34, 255, 0.5);
+  text-shadow: 0 0 5px #da22ff80;
+}
+
+/* Terminal links */
+.terminal-links a {
+  color: #00ffaacc;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  cursor: default;
+}
+
+.terminal-links a:hover {
+  color: #37ff00;
+  text-shadow: 0 0 5px #ffffff;
+}
+
+/* 自定义下划线颜色 */
+.terminal-links u {
+  text-decoration-color: #37ff00;
+  text-decoration-thickness: 1px;
+  padding-bottom: 1px;
+}
+
+.terminal-links a:hover u {
+  text-decoration-color: #37ff00;
+  text-decoration-thickness: 2px;
+}
+
+/* 添加提示文本 */
+.terminal-links a::after {
+  content: " [Ctrl+点击]";
+  font-size: 0.8em;
+  text-shadow: none;
+  color: #ccc;
+  margin-left: 3px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.terminal-links a:hover::after {
+  opacity: 1;
+}
+
+/* 工具链接特殊样式 */
+.terminal-links a.tool-link {
+  color: #00c6ff;
+  border-bottom: 1px solid #00c6ff;
+  padding-bottom: 1px;
+  font-weight: bold;
+}
+
+.terminal-links a.tool-link:hover {
+  color: #60a5fa;
+  border-bottom: 1px solid #60a5fa;
 }
 

@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { gsap } from 'gsap';
-import BlackHoleButton from "@/components/BlackHoleButton"
+import { gsap } from "gsap";
+import BlackHoleButton from "@/components/BlackHoleButton";
 
 const COLOR = "#FFFFFF";
 const HIT_COLOR = "#333333";
@@ -436,50 +436,54 @@ const PromptingIsAllYouNeed = () => {
 
   return (
     <>
-    <canvas
-      ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full transition-opacity duration-1000"
-      style={{ 
-        opacity: 1,
-        clipPath: 'circle(100% at center)'
-      }}
-      aria-label="Prompting Is All You Need: Fullscreen Pong game with pixel text"
-    />
-      <div className="flex justify-center items-end h-screen pb-10">
-      <BlackHoleButton
-        buttonText="启动！" 
-        intensity={1.3} 
-        duration={6000} 
-        onClick={() => {
-          const canvas = canvasRef.current;
-          if(canvas) {
-            const tl = gsap.timeline({
-              onComplete: () => {
-                router.push("/terminal");
-              }
-            });
-            
-            tl.to(canvas, {
-              opacity: 0.7,
-              duration: .6,
-              ease: "power2.out"
-            })
-            .to(canvas, {
-              clipPath: "circle(0% at 50% 50%)",
-              duration: 3.5,
-              ease: "power2.inOut"
-            })
-            .to(canvas, {
-              opacity: 0,
-              duration: .5,
-              ease: "power2.inOut"
-            }, "-=0.5");
-          }
-        }} 
+      <canvas
+        ref={canvasRef}
+        className="fixed top-0 left-0 w-full h-full transition-opacity duration-1000"
+        style={{
+          opacity: 1,
+          clipPath: "circle(100% at center)",
+        }}
+        aria-label="Prompting Is All You Need: Fullscreen Pong game with pixel text"
       />
+      <div className="flex justify-center items-end h-screen pb-10">
+        <BlackHoleButton
+          buttonText="启动！"
+          intensity={1.3}
+          duration={6000}
+          onClick={() => {
+            const canvas = canvasRef.current;
+            if (canvas) {
+              const tl = gsap.timeline({
+                onComplete: () => {
+                  router.push("/terminal");
+                },
+              });
+
+              tl.to(canvas, {
+                opacity: 0.7,
+                duration: 0.6,
+                ease: "power2.out",
+              })
+                .to(canvas, {
+                  clipPath: "circle(0% at 50% 50%)",
+                  duration: 3.5,
+                  ease: "power2.inOut",
+                })
+                .to(
+                  canvas,
+                  {
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "power2.inOut",
+                  },
+                  "-=0.5"
+                );
+            }
+          }}
+        />
       </div>
     </>
   );
-}
+};
 
 export default PromptingIsAllYouNeed;

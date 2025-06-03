@@ -399,11 +399,11 @@ export default function BlackHoleButton({
           animationIdRef.current = null
         }
 
-        // Show button
-        if (buttonRef.current) {
-          buttonRef.current.style.opacity = "1"
-          buttonRef.current.style.pointerEvents = "auto"
-        }
+        // 动画结束后不再显示按钮
+        // if (buttonRef.current) {
+        //   buttonRef.current.style.opacity = "1"
+        //   buttonRef.current.style.pointerEvents = "auto"
+        // }
       }
     }
 
@@ -914,19 +914,19 @@ export default function BlackHoleButton({
       <motion.button
         ref={buttonRef}
         onClick={handleClick}
-        className="relative cursor-pointer py-2.5 px-2.5 text-base font-semibold text-white bg-gradient-to-br from-[#6b33a0] to-[#4c1d80] border border-[#9b4ddf] rounded-xl shadow-[0_0_15px_rgba(155,77,223,0.5)] transition-all duration-300 z-10 min-w-[150px] outline-none overflow-hidden"
+        className="relative cursor-pointer py-2.5 px-2.5 text-base font-semibold text-black bg-gradient-to-br from-[#ffffff] to-[#cccccc] border border-[#ffffff] rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.6)] transition-all duration-300 z-10 min-w-[150px] outline-none overflow-hidden"
         whileHover={{
           y: -2,
-          boxShadow: "0 0 20px rgba(155, 77, 223, 0.7)",
+          boxShadow: "0 0 20px rgba(255, 255, 255, 0.8)",
         }}
         whileTap={{
           y: 1,
-          boxShadow: "0 0 8px rgba(155, 77, 223, 0.4)",
+          boxShadow: "0 0 8px rgba(255, 255, 255, 0.5)",
         }}
       >
         <span className="relative z-10 drop-shadow-md">{buttonText}</span>
         <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-[#9b4ddf] to-[#6b33a0] opacity-0 z-0"
+          className="absolute inset-0 bg-gradient-to-br from-[#ffffff] to-[#dddddd] opacity-0 z-0"
           whileHover={{ opacity: 1 }}
         />
       </motion.button>
