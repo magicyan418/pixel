@@ -5,7 +5,7 @@ const COMMANDS = {
   ROUTES: "routes",
   GOTO: "goto",
   IPCARD: "ipcard",
-  TOOLS: "tools",
+  PROJECTS: "projects",
   RICKROLL: "rickroll",
   MATRIX: "matrix",
   COFFEE: "coffee",
@@ -18,7 +18,7 @@ const COMMAND_DESCRIPTIONS = {
   [COMMANDS.ROUTES]: "显示所有可用路由",
   [COMMANDS.GOTO]: "跳转到指定路由 (用法: goto <路由名称>)",
   [COMMANDS.IPCARD]: "显示IP签名档",
-  [COMMANDS.TOOLS]: "显示所有可用工具",
+  [COMMANDS.PROJECTS]: "显示所有可用项目",
   [COMMANDS.RICKROLL]: "观看Rick Roll视频(彩蛋)",
   [COMMANDS.MATRIX]: "开启黑客帝国",
   [COMMANDS.COFFEE]: "煮个咖啡",
@@ -44,15 +44,15 @@ const AVAILABLE_ROUTES = [
 ];
 
 // 可用工具
-const AVAILABLE_TOOLS = [
+const AVAILABLE_PROJECTS = [
   {
     name: "uuavatar",
-    description: "唯一头像",
+    description: "生成属于你的唯一头像",
     url: "https://uuavatar.magicyan418.com",
   },
   {
     name: "fileshare",
-    description: "文件共享",
+    description: "WebRTC文件共享",
     url: "https://fileshare.magicyan418.com",
   },
   {
@@ -60,6 +60,11 @@ const AVAILABLE_TOOLS = [
     description: "下班倒计时",
     url: "https://countdown.magicyan418.com",
   },
+  {
+    name: "chatlive2d",
+    description: "与可爱的纸片人互动",
+    url: "https://live2d.magicyan418.com",
+  }
 ];
 
 /**
@@ -89,8 +94,8 @@ export function executeCommand(commandInput: string): string {
     case COMMANDS.IPCARD:
       return showIpCard();
 
-    case COMMANDS.TOOLS:
-      return listTools();
+    case COMMANDS.PROJECTS:
+      return listProjects();
 
     case COMMANDS.RICKROLL:
       return rickRoll();
@@ -170,29 +175,29 @@ function showIpCard(): string {
 }
 
 /**
- * 显示所有可用工具
+ * 显示所有项目
  */
-function listTools(): string {
-  let toolsText =
-    "<span class='gradient-text-gold'>可用工具: (Ctrl+点击名称访问)</span>\n\n";
+function listProjects(): string {
+  let projectsText =
+    "<span class='gradient-text-gold'>可用项目: (Ctrl+点击名称访问)</span>\n\n";
 
   // 计算最长的名称长度，用于对齐
-  const maxNameLength = AVAILABLE_TOOLS.reduce(
-    (max, tool) => Math.max(max, tool.name.length),
+  const maxNameLength = AVAILABLE_PROJECTS.reduce(
+    (max, project) => Math.max(max, project.name.length),
     0
   );
 
   // 使用等宽字符确保对齐
-  AVAILABLE_TOOLS.forEach((tool) => {
+  AVAILABLE_PROJECTS.forEach((project) => {
     // 将下划线只应用于名称本身
-    toolsText += `<a href="${tool.url}" target="_blank"><u>${
-      tool.name
+    projectsText += `<a href="${project.url}" target="_blank"><u>${
+      project.name
     }</u></a>${" ".repeat(
-      maxNameLength - tool.name.length + 2
-    )}  <span class="gradient-text-gold">-  ${tool.description}</span>\n`;
+      maxNameLength - project.name.length + 2
+    )}  <span class="gradient-text-gold">-  ${project.description}</span>\n`;
   });
 
-  return toolsText;
+  return projectsText;
 }
 
 /**
