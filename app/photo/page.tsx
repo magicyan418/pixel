@@ -384,6 +384,10 @@ export default function Home() {
     const viewportRight = -offsetRef.current.x + (viewportWidth * bufferFactor) / 2
     const viewportTop = -offsetRef.current.y - (viewportHeight * bufferFactor) / 2
     const viewportBottom = -offsetRef.current.y + (viewportHeight * bufferFactor) / 2
+    
+    // 计算当前视窗中心点在整个场景中的位置
+    const centerX = -offsetRef.current.x;
+    const centerY = -offsetRef.current.y;
 
     // 绘制可视区域内的图片
     imagesRef.current.forEach((img) => {
@@ -404,6 +408,54 @@ export default function Home() {
         const drawX = viewportWidth / 2 + img.x + offsetRef.current.x
         const drawY = viewportHeight / 2 + img.y + offsetRef.current.y
 
+        // 计算图片填充相框的参数 (类似 object-fit: cover)
+        const { width: frameWidth, height: frameHeight } = img
+        const imgWidth = cachedImage.width
+        const imgHeight = cachedImage.height
+        
+        // 计算适合相框的尺寸和位置偏移，确保填满相框
+        let sourceX = 0, sourceY = 0, sourceWidth = imgWidth, sourceHeight = imgHeight
+        
+        // 计算图片缩放比例
+        const widthRatio = frameWidth / imgWidth
+        const heightRatio = frameHeight / imgHeight
+        
+        // 根据图片与相框的比例关系，计算裁剪区域
+        if (widthRatio > heightRatio) {
+          // 宽度比例大，以宽度为基准，裁剪高度
+          sourceHeight = frameHeight / widthRatio
+          
+          // 计算图片相对于中心点的位置（-1到1之间）
+          const relativeY = (img.y - centerY) / (1000); // 1000是一个缩放因子，可以调整
+          
+          // 计算裁剪区域，基于图片的相对位置
+          const totalExcessHeight = imgHeight - sourceHeight;
+          
+          // 将relativeY映射到0-1之间，用于决定裁剪位置
+          // 使用sin函数让变化更加平滑
+          const factor = (Math.sin(relativeY * Math.PI) + 1) / 2;
+          
+          // 应用裁剪位置
+          sourceY = Math.max(0, Math.min(totalExcessHeight, totalExcessHeight * factor));
+          
+        } else {
+          // 高度比例大，以高度为基准，裁剪宽度
+          sourceWidth = frameWidth / heightRatio
+          
+          // 计算图片相对于中心点的位置（-1到1之间）
+          const relativeX = (img.x - centerX) / (1000); // 1000是一个缩放因子，可以调整
+          
+          // 计算裁剪区域，基于图片的相对位置
+          const totalExcessWidth = imgWidth - sourceWidth;
+          
+          // 将relativeX映射到0-1之间，用于决定裁剪位置
+          // 使用sin函数让变化更加平滑
+          const factor = (Math.sin(relativeX * Math.PI) + 1) / 2;
+          
+          // 应用裁剪位置
+          sourceX = Math.max(0, Math.min(totalExcessWidth, totalExcessWidth * factor));
+        }
+
         // 绘制图片
         ctx.save() // 保存当前状态
         
@@ -413,18 +465,22 @@ export default function Home() {
         ctx.shadowOffsetX = 0 // 阴影X偏移
         ctx.shadowOffsetY = 5 // 阴影Y偏移
         
-        // 绘制图片
-        ctx.drawImage(cachedImage, drawX, drawY, img.width, img.height)
+        // 绘制图片，填满相框 (使用9参数版本的drawImage实现裁剪效果)
+        ctx.drawImage(
+          cachedImage,
+          sourceX, sourceY, sourceWidth, sourceHeight, // 源图片的裁剪区域
+          drawX, drawY, frameWidth, frameHeight // 目标区域
+        )
         
         // 添加外边框
         ctx.lineWidth = 4 // 边框宽度
         ctx.strokeStyle = "white" // 边框颜色
-        ctx.strokeRect(drawX, drawY, img.width, img.height)
+        ctx.strokeRect(drawX, drawY, frameWidth, frameHeight)
         
         // 添加内边框（双边框效果）
         ctx.lineWidth = 2 // 内边框宽度
         ctx.strokeStyle = "rgba(0, 0, 0, 0.3)" // 内边框颜色
-        ctx.strokeRect(drawX + 3, drawY + 3, img.width - 6, img.height - 6)
+        ctx.strokeRect(drawX + 3, drawY + 3, frameWidth - 6, frameHeight - 6)
         
         ctx.restore() // 恢复之前的状态
       }

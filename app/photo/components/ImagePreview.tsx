@@ -133,8 +133,9 @@ const ImagePreview = ({ image, onClose }: ImagePreviewProps) => {
               style={{
                 width: dimensions.width,
                 height: dimensions.height,
+                objectFit: "contain",
               }}
-              className="rounded-md object-contain shadow-2xl"
+              className="rounded-md shadow-2xl"
             />
           </motion.div>
         )}
