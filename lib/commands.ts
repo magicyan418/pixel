@@ -4,7 +4,6 @@ const COMMANDS = {
   CLEAR: "clear",
   ROUTES: "routes",
   GOTO: "goto",
-  IPCARD: "ipcard",
   PROJECTS: "projects",
   RICKROLL: "rickroll",
   MATRIX: "matrix",
@@ -17,7 +16,6 @@ const COMMAND_DESCRIPTIONS = {
   [COMMANDS.CLEAR]: "清除终端屏幕",
   [COMMANDS.ROUTES]: "显示所有可用路由",
   [COMMANDS.GOTO]: "跳转到指定路由 (用法: goto <路由名称>)",
-  [COMMANDS.IPCARD]: "显示IP签名档",
   [COMMANDS.PROJECTS]: "显示所有可用项目",
   [COMMANDS.RICKROLL]: "观看Rick Roll视频(彩蛋)",
   [COMMANDS.MATRIX]: "开启黑客帝国",
@@ -91,9 +89,6 @@ export function executeCommand(commandInput: string): string {
     case COMMANDS.GOTO:
       return gotoRoute(params[0]);
 
-    case COMMANDS.IPCARD:
-      return showIpCard();
-
     case COMMANDS.PROJECTS:
       return listProjects();
 
@@ -164,14 +159,6 @@ function gotoRoute(routeName: string): string {
   }
 
   return `无法跳转到 ${route.url} (浏览器环境不可用)`;
-}
-
-/**
- * 显示IP签名档
- */
-function showIpCard(): string {
-  // 返回一个特殊标记，让页面组件处理
-  return "SPECIAL_COMMAND_IPCARD";
 }
 
 /**

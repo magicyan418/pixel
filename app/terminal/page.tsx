@@ -26,54 +26,6 @@ export default function Home() {
     // Add command to history
     setHistory((prev) => [...prev, { type: "command", content: command }]);
 
-    // 特殊处理ipcard命令，防止重复渲染
-    if (command.trim().toLowerCase() === "ipcard") {
-      if (!ipcardExecutedRef.current) {
-        ipcardExecutedRef.current = true;
-        
-        // 生成一个固定的缓存URL
-        const today = new Date().toISOString().split('T')[0];
-        const timestamp = Date.now(); // 添加时间戳确保每次都是新图片
-        const ipCardUrl = `https://api.oick.cn/api/netcard?_t=${timestamp}&_cache=${today}`;
-        
-        // 添加结果到历史记录，使用img标签以便SafeHTML组件能够提取并使用ImageContent组件渲染
-        setTimeout(() => {
-          setHistory((prev) => [
-            ...prev, 
-            { 
-              type: "response", 
-              content: `<img src="${ipCardUrl}" alt="IP签名档" />` 
-            }
-          ]);
-          
-          // 尝试滚动到底部
-          if (terminalRef.current) {
-            const scrollElement = terminalRef.current.querySelector('.terminal-scrollbar');
-            if (scrollElement) {
-              setTimeout(() => {
-                scrollElement.scrollTop = scrollElement.scrollHeight;
-              }, 100);
-            }
-          }
-        }, 300);
-        
-        return;
-      } else {
-        // 如果已经执行过，提示用户
-        setTimeout(() => {
-          setHistory((prev) => [
-            ...prev, 
-            { 
-              type: "response", 
-              content: "IP签名档已经显示在上方。如需刷新，请先清除终端（clear命令）后再试。" 
-            }
-          ]);
-        }, 300);
-        
-        return;
-      }
-    }
-
     // 特殊处理 matrix 命令
     if (command.trim().toLowerCase() === "matrix") {
       setTimeout(() => {
