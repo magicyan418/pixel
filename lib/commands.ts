@@ -4,6 +4,7 @@ const COMMANDS = {
   CLEAR: "clear",
   ROUTES: "routes",
   GOTO: "goto",
+  IPCARD: "ipcard",
   PROJECTS: "projects",
   RICKROLL: "rickroll",
   MATRIX: "matrix",
@@ -16,6 +17,7 @@ const COMMAND_DESCRIPTIONS = {
   [COMMANDS.CLEAR]: "清除终端屏幕",
   [COMMANDS.ROUTES]: "显示所有可用路由",
   [COMMANDS.GOTO]: "跳转到指定路由 (用法: goto <路由名称>)",
+  [COMMANDS.IPCARD]: "显示IP签名档",
   [COMMANDS.PROJECTS]: "显示所有可用项目",
   [COMMANDS.RICKROLL]: "观看Rick Roll视频(彩蛋)",
   [COMMANDS.MATRIX]: "开启黑客帝国",
@@ -27,18 +29,18 @@ const AVAILABLE_ROUTES = [
   {
     name: "home",
     url: "/home",
-    description: "首页"
+    description: "首页",
   },
   {
     name: "terminal",
     url: "/terminal",
-    description: "终端"
+    description: "终端",
   },
   {
     name: "photo",
     url: "/photo",
-    description: "照片墙"
-  }
+    description: "照片墙",
+  },
 ];
 
 // 可用工具
@@ -62,7 +64,7 @@ const AVAILABLE_PROJECTS = [
     name: "chatlive2d",
     description: "与可爱的纸片人互动",
     url: "https://live2d.magicyan418.com",
-  }
+  },
 ];
 
 /**
@@ -88,6 +90,9 @@ export function executeCommand(commandInput: string): string {
 
     case COMMANDS.GOTO:
       return gotoRoute(params[0]);
+
+    case COMMANDS.IPCARD:
+      return showIpCard();
 
     case COMMANDS.PROJECTS:
       return listProjects();
@@ -129,13 +134,17 @@ function listRoutes(): string {
   let routesText = "可用路由:\n\n";
 
   // 计算最长的名称长度，用于对齐
-  const maxNameLength = AVAILABLE_ROUTES.reduce((max, route) => 
-    Math.max(max, route.name.length), 0);
-  
+  const maxNameLength = AVAILABLE_ROUTES.reduce(
+    (max, route) => Math.max(max, route.name.length),
+    0
+  );
+
   AVAILABLE_ROUTES.forEach((route) => {
-    routesText += `${route.name.padEnd(maxNameLength + 2)} - ${route.description}\n`;
+    routesText += `${route.name.padEnd(maxNameLength + 2)} - ${
+      route.description
+    }\n`;
   });
-  
+
   return routesText;
 }
 
@@ -144,13 +153,17 @@ function listRoutes(): string {
  */
 function gotoRoute(routeName: string): string {
   if (!routeName) {
-    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${AVAILABLE_ROUTES.map(r => r.name).join(", ")}`;
+    return `错误: 需要路由名称 (用法: goto <路由名称>)\n可用路由: ${AVAILABLE_ROUTES.map(
+      (r) => r.name
+    ).join(", ")}`;
   }
 
-  const route = AVAILABLE_ROUTES.find(r => r.name === routeName);
+  const route = AVAILABLE_ROUTES.find((r) => r.name === routeName);
 
   if (!route) {
-    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${AVAILABLE_ROUTES.map(r => r.name).join(", ")}`;
+    return `错误: 路由 '${routeName}' 不存在\n可用路由: ${AVAILABLE_ROUTES.map(
+      (r) => r.name
+    ).join(", ")}`;
   }
 
   if (typeof window !== "undefined") {
@@ -159,6 +172,14 @@ function gotoRoute(routeName: string): string {
   }
 
   return `无法跳转到 ${route.url} (浏览器环境不可用)`;
+}
+
+/**
+ * 显示IP签名档
+ */
+function showIpCard(): string {
+  // 返回一个特殊标记，让页面组件处理
+  return "SPECIAL_COMMAND_IPCARD";
 }
 
 /**
