@@ -41,6 +41,11 @@ const AVAILABLE_ROUTES = [
     url: "/photo",
     description: "照片墙",
   },
+  {
+    name: "discussions",
+    url: "/discussions",
+    description: "评论区",
+  },
 ];
 
 // 可用工具
