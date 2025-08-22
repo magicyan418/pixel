@@ -95,7 +95,7 @@ const SafeHTML = memo(({ html }: { html: string }) => {
           // 只有按住 Ctrl 键时才允许点击
           if (!isCtrlPressed) {
             e.preventDefault();
-            alert('请按住 Ctrl 键并点击链接以访问');
+            
           }
         });
       });
