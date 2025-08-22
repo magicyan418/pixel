@@ -70,6 +70,16 @@ const AVAILABLE_PROJECTS = [
     description: "与可爱的纸片人互动",
     url: "https://live2d.magicyan418.com",
   },
+  {
+    name: "moontv",
+    description: "电影/电视剧聚合站",
+    url: "https://tv.magicyan418.com",
+  },
+  {
+    name: "resume-builder",
+    description: "简历生成器",
+    url: "https://resume.magicyan418.com",
+  },
 ];
 
 /**
