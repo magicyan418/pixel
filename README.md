@@ -172,4 +172,4 @@ const PIXEL_MAP = {
 
 ---
 
-**Made with ❤️ by MagicYan418**
+**Made with ❤️ by magicyan418**
