@@ -182,9 +182,9 @@ function gotoRoute(routeName: string): string {
   }
 
   if (typeof window !== "undefined") {
-    window.open(route.url, '_blank');
-    return `正在新标签页中打开 ${route.name} (${route.url})...`;
-}
+    window.location.href = route.url;
+    return `正在跳转到 ${route.name} (${route.url})...`;
+  }
 
   return `无法跳转到 ${route.url} (浏览器环境不可用)`;
 }
