@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@lottiefiles/dotlottie-react':
-        specifier: ^0.13.5
-        version: 0.13.5(react@19.1.1)
+      '@lottiefiles/dotlottie-web':
+        specifier: ^0.50.2
+        version: 0.50.2
       '@splinetool/react-spline':
         specifier: ^4.0.0
         version: 4.1.0(@splinetool/runtime@1.10.48)(next@15.3.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -223,13 +223,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.30':
     resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
 
-  '@lottiefiles/dotlottie-react@0.13.5':
-    resolution: {integrity: sha512-4U5okwjRqDPkjB572hfZtLXJ/LGfCo6vDwUB2KIPEUoSgqbIlw+UrbnaqVp3GS+dRvhMD27F2JObpHpYRlpF0Q==}
-    peerDependencies:
-      react: ^17 || ^18 || ^19
-
-  '@lottiefiles/dotlottie-web@0.44.0':
-    resolution: {integrity: sha512-IUWKVciDJI/BMWDWnh7j0Ngd0N8q9ySRAwm84aDqIE07qpmdZ7x1rkIpBaU1yHSNqNYHeh1Rxsl+LC3CY4f0KA==}
+  '@lottiefiles/dotlottie-web@0.50.2':
+    resolution: {integrity: sha512-CKABl0kI9yY48FamEMDsYWKQQWP4VgInhwOSG/1Q2I7gOSHGv6YalNiOkiYRjVznEjavuRvfarX6cMKhcbZKew==}
 
   '@next/env@15.3.0':
     resolution: {integrity: sha512-6mDmHX24nWlHOlbwUiAOmMyY7KELimmi+ed8qWcJYjqXeC+G6JzPZ3QosOAfjNwgMIzwhXBiRiCgdh8axTTdTA==}
@@ -822,12 +817,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lottiefiles/dotlottie-react@0.13.5(react@19.1.1)':
-    dependencies:
-      '@lottiefiles/dotlottie-web': 0.44.0
-      react: 19.1.1
-
-  '@lottiefiles/dotlottie-web@0.44.0': {}
+  '@lottiefiles/dotlottie-web@0.50.2': {}
 
   '@next/env@15.3.0': {}
 

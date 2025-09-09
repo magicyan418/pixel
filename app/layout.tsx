@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import WasmpathProvider from "./WasmpathProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "magicyan418",
-  description: "evrerything you need to know about magicyan418 pixel",
+  description: "everything you need to know about magicyan418 pixel",
 };
 
 export default function RootLayout({
@@ -27,6 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* 全局导入dotlottie-player.wasm */}
+        <WasmpathProvider />
         {children}
       </body>
     </html>
