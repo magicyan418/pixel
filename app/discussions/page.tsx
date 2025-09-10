@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { MessageSquare, Terminal, Github, Users, Clock } from "lucide-react"
 
-export default function CommentsPage() {
+export default function DiscussionsPage() {
   const giscusRef = useRef<HTMLDivElement>(null)
   const [terminalText, setTerminalText] = useState("")
   const [showCursor, setShowCursor] = useState(true)

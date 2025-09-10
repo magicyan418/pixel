@@ -181,12 +181,13 @@ function gotoRoute(routeName: string): string {
     ).join(", ")}`;
   }
 
-  if (typeof window !== "undefined") {
-    window.location.href = route.url;
-    return `正在跳转到 ${route.name} (${route.url})...`;
-  }
-
-  return `无法跳转到 ${route.url} (浏览器环境不可用)`;
+  // 返回一个特殊的标记，让前端组件知道需要进行路由跳转
+  const params = {
+    routeName: route.name,
+    routerUrl: route.url,
+    type: "SPECIAL_COMMAND_GOTO",
+  };
+  return JSON.stringify(params);
 }
 
 /**

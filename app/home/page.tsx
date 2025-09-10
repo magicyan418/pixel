@@ -138,7 +138,7 @@ interface Paddle {
   isVertical: boolean;
 }
 
-const PromptingIsAllYouNeed = () => {
+const HomePage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const ballRef = useRef<Ball>({ x: 0, y: 0, dx: 0, dy: 0, radius: 0 });
@@ -486,4 +486,4 @@ const PromptingIsAllYouNeed = () => {
   );
 };
 
-export default PromptingIsAllYouNeed;
+export default HomePage;

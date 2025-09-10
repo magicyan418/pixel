@@ -7,7 +7,7 @@ import ConveyorBelt from "./components/ConveyorBelt"
 import HandLoading from "@/components/HandLoading"
 import gsap from "gsap"
 
-export default function Home() {
+export default function PhotoPage() {
   // Canvas 相关引用
   const canvasRef = useRef<HTMLCanvasElement>(null) // 画布元素引用
   const contextRef = useRef<CanvasRenderingContext2D | null>(null) // 画布上下文引用
