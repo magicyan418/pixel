@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import WasmpathProvider from "./WasmpathProvider";
+import FloatBall from "@/components/FloatBall";
+import HotkeyListener from "@/components/HotkeyListener";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,6 +32,8 @@ export default function RootLayout({
       >
         {/* 全局导入dotlottie-player.wasm */}
         <WasmpathProvider />
+        <HotkeyListener />
+        <FloatBall />
         {children}
       </body>
     </html>

@@ -25,7 +25,7 @@ const COMMAND_DESCRIPTIONS = {
 };
 
 // 可用路由
-const AVAILABLE_ROUTES = [
+export const AVAILABLE_ROUTES = [
   {
     name: "home",
     url: "/home",
@@ -49,7 +49,7 @@ const AVAILABLE_ROUTES = [
 ];
 
 // 可用工具
-const AVAILABLE_PROJECTS = [
+export const AVAILABLE_PROJECTS = [
   {
     name: "uuavatar",
     description: "生成属于你的唯一头像",
