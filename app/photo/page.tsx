@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import ImagePreview from "./components/ImagePreview";
 import ConveyorBelt from "./components/ConveyorBelt";
 import HandLoading from "@/components/HandLoading";
-import ContextMenu from "./components/ContextMenu";
 import gsap from "gsap";
 
 export default function PhotoPage() {
@@ -982,9 +981,6 @@ export default function PhotoPage() {
 
           {/* 传送带边框组件 */}
           <ConveyorBelt isActive={isLongPressing} />
-
-          {/* 鼠标右键菜单 */}
-          <ContextMenu />
         </>
       )}
     </main>
