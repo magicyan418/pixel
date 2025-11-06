@@ -30,21 +30,29 @@ export const AVAILABLE_ROUTES = [
     name: "home",
     url: "/home",
     description: "首页",
+    icon: "IconHome",
+    color: "from-blue-500 to-cyan-500",
   },
   {
     name: "terminal",
     url: "/terminal",
     description: "终端",
+    icon: "IconTerminal2",
+    color: "from-green-500 to-emerald-500",
   },
   {
     name: "photo",
     url: "/photo",
     description: "照片墙",
+    icon: "IconPhoto",
+    color: "from-purple-500 to-pink-500",
   },
   {
     name: "discussions",
     url: "/discussions",
     description: "评论区",
+    icon: "IconMessage",
+    color: "from-orange-500 to-red-500",
   },
 ];
 
@@ -54,31 +62,43 @@ export const AVAILABLE_PROJECTS = [
     name: "uuavatar",
     description: "生成属于你的唯一头像",
     url: "https://uuavatar.magicyan418.com",
+    icon: "IconUserCircle",
+    color: "from-indigo-500 to-purple-500",
   },
   {
     name: "fileshare",
     description: "WebRTC文件共享",
     url: "https://fileshare.magicyan418.com",
+    icon: "IconShare",
+    color: "from-cyan-500 to-blue-500",
   },
   {
     name: "countdown",
     description: "下班倒计时",
     url: "https://countdown.magicyan418.com",
+    icon: "IconClock",
+    color: "from-yellow-500 to-orange-500",
   },
   {
     name: "chatlive2d",
     description: "与可爱的纸片人互动",
     url: "https://live2d.magicyan418.com",
+    icon: "IconMessage2",
+    color: "from-pink-500 to-rose-500",
   },
   {
     name: "moontv",
     description: "电影/电视剧聚合站",
     url: "https://tv.magicyan418.com",
+    icon: "IconDeviceTv",
+    color: "from-red-500 to-pink-500",
   },
   {
     name: "resume-builder",
     description: "简历生成器",
     url: "https://resume.magicyan418.com",
+    icon: "IconFileText",
+    color: "from-green-500 to-teal-500",
   },
 ];
 

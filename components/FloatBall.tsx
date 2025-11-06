@@ -164,7 +164,7 @@ const FloatBall = () => {
         <VisuallyHidden>
           <DrawerTitle></DrawerTitle>
         </VisuallyHidden>
-        <Desktop />
+        <Desktop onClose={() => setOpen(false)} />
       </DrawerContent>
     </Drawer>
   );
