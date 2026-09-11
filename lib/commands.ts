@@ -142,6 +142,13 @@ export const AVAILABLE_PROJECTS = [
     icon: "IconCube3dSphere",
     color: "from-cyan-500 to-violet-500",
   },
+  {
+    name: "note",
+    description: "Obsidian 笔记",
+    url: "https://note.magicyan418.com/",
+    icon: "IconNotes",
+    color: "from-violet-500 to-purple-500",
+  },
 ];
 
 /**
