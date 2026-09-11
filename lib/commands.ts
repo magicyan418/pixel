@@ -135,6 +135,13 @@ export const AVAILABLE_PROJECTS = [
     icon: "IconMessages",
     color: "from-emerald-500 to-green-500",
   },
+  {
+    name: "3d-room",
+    description: "虚拟房间",
+    url: "https://3d-room.magicyan418.com/",
+    icon: "IconCube3dSphere",
+    color: "from-cyan-500 to-violet-500",
+  },
 ];
 
 /**
