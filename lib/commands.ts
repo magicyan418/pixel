@@ -67,7 +67,7 @@ export const AVAILABLE_PROJECTS = [
   },
   {
     name: "fileshare",
-    description: "WebRTC文件共享",
+    description: "闪传",
     url: "https://fileshare.magicyan418.com",
     icon: "IconShare",
     color: "from-cyan-500 to-blue-500",
@@ -99,6 +99,41 @@ export const AVAILABLE_PROJECTS = [
     url: "https://resume.magicyan418.com",
     icon: "IconFileText",
     color: "from-green-500 to-teal-500",
+  },
+  {
+    name: "nav",
+    description: "导航站",
+    url: "https://nav.magicyan418.com",
+    icon: "IconCompass",
+    color: "from-sky-500 to-cyan-500",
+  },
+  {
+    name: "epub-reader",
+    description: "EPUB 阅读器",
+    url: "https://epub.magicyan418.com",
+    icon: "IconBook2",
+    color: "from-amber-500 to-orange-500",
+  },
+  {
+    name: "fly",
+    description: "传奇机长",
+    url: "https://fly.magicyan418.com",
+    icon: "IconPlane",
+    color: "from-blue-500 to-indigo-500",
+  },
+  {
+    name: "klotski",
+    description: "数字华容道",
+    url: "https://klotski.magicyan418.com",
+    icon: "IconPuzzle",
+    color: "from-violet-500 to-fuchsia-500",
+  },
+  {
+    name: "rag",
+    description: "RAG 问答",
+    url: "https://rag.magicyan418.com",
+    icon: "IconMessages",
+    color: "from-emerald-500 to-green-500",
   },
 ];
 

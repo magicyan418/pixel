@@ -140,6 +140,7 @@ interface Paddle {
 
 const HomePage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const transitionOverlayRef = useRef<HTMLDivElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const ballRef = useRef<Ball>({ x: 0, y: 0, dx: 0, dy: 0, radius: 0 });
   const paddlesRef = useRef<Paddle[]>([]);
@@ -154,6 +155,7 @@ const HomePage = () => {
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    let animationFrameId = 0;
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -422,7 +424,7 @@ const HomePage = () => {
     const gameLoop = () => {
       updateGame();
       drawGame();
-      requestAnimationFrame(gameLoop);
+      animationFrameId = requestAnimationFrame(gameLoop);
     };
 
     resizeCanvas();
@@ -431,21 +433,22 @@ const HomePage = () => {
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <>
+    <main className="relative h-screen overflow-hidden bg-black">
       <canvas
         ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full transition-opacity duration-1000"
+        className="fixed top-0 left-0 z-0 h-full w-full"
         style={{
           opacity: 1,
           clipPath: "circle(100% at center)",
         }}
         aria-label="Prompting Is All You Need: Fullscreen Pong game with pixel text"
       />
-      <div className="flex justify-center items-end h-screen pb-10">
+      <div className="relative z-10 flex h-screen items-end justify-center pb-10">
         <BlackHoleButton
           buttonText="启动！"
           intensity={1.3}
@@ -453,36 +456,41 @@ const HomePage = () => {
           onClick={() => {
             const canvas = canvasRef.current;
             if (canvas) {
+              const overlay = transitionOverlayRef.current;
               const tl = gsap.timeline({
                 onComplete: () => {
                   router.push("/terminal");
                 },
               });
 
-              tl.to(canvas, {
-                opacity: 0.7,
-                duration: 0.6,
+              tl.to(overlay, {
+                opacity: 0.72,
+                duration: 0.45,
                 ease: "power2.out",
               })
-                .to(canvas, {
-                  clipPath: "circle(0% at 50% 50%)",
-                  duration: 3.5,
-                  ease: "power2.inOut",
-                })
                 .to(
                   canvas,
                   {
-                    opacity: 0,
-                    duration: 0.5,
-                    ease: "power2.inOut",
+                    opacity: 0.12,
+                    scale: 0.96,
+                    filter: "blur(4px)",
+                    transformOrigin: "50% 50%",
+                    duration: 3.35,
+                    ease: "power3.inOut",
                   },
-                  "-=0.5"
-                );
+                  0
+                )
+                .to(overlay, { opacity: 1, duration: 0.35, ease: "none" });
             }
           }}
         />
       </div>
-    </>
+      <div
+        ref={transitionOverlayRef}
+        className="pointer-events-none fixed inset-0 z-[60] bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.86)_64%,#000_100%)] opacity-0"
+        aria-hidden="true"
+      />
+    </main>
   );
 };
 

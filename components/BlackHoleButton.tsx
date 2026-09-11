@@ -121,9 +121,8 @@ export default function BlackHoleButton({
     const canvas = canvasRef.current
     const container = containerRef.current
   
-    // 设置画布大小为窗口的两倍以覆盖更大区域
-    canvas.width = window.innerWidth * 2
-    canvas.height = window.innerHeight * 2
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
   
     canvas.style.width = `${window.innerWidth}px`
     canvas.style.height = `${window.innerHeight}px`
@@ -131,7 +130,7 @@ export default function BlackHoleButton({
     canvas.style.left = "50%"
     canvas.style.top = "50%"
     canvas.style.transform = "translate(-50%, -50%)"
-    canvas.style.zIndex = "50" // 确保在其他元素之上
+    canvas.style.zIndex = "70" // 位于过渡遮罩和全局悬浮组件之上
     canvas.style.pointerEvents = "none"
   
     // 获取渲染上下文
@@ -142,20 +141,15 @@ export default function BlackHoleButton({
       return
     }
   
-    // 设置黑洞中心位置为屏幕中心
+    // 黑洞始终生成在屏幕中心，和页面收缩圆心保持一致
     center.current.x = canvas.width / 2
     center.current.y = canvas.height / 2
-  
+
     // 记录按钮大小用于黑洞初始大小
     if (buttonRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect()
-      
-      buttonSize.current.width = buttonRect.width * 2
-      buttonSize.current.height = buttonRect.height * 2
-  
-      console.log("屏幕中心:", window.innerWidth / 2, window.innerHeight / 2)
-      console.log("画布中心:", center.current.x, center.current.y)
-      console.log("按钮大小:", buttonSize.current.width, buttonSize.current.height)
+      buttonSize.current.width = buttonRect.width
+      buttonSize.current.height = buttonRect.height
     } else {
       console.error("按钮引用为空")
     }
@@ -908,7 +902,7 @@ export default function BlackHoleButton({
     <div className="relative inline-block" ref={containerRef}>
       <canvas
         ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"
+        className="fixed top-0 left-0 z-[70] h-full w-full pointer-events-none"
         style={{ display: isActive ? "block" : "none" }}
       />
       <motion.button

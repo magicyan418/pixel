@@ -55,6 +55,24 @@ input.terminal-cursor {
   caret-color: #00ffaa80;
 }
 
+.desktop-scrollbar {
+  scrollbar-color: rgba(139, 92, 246, 0.55) transparent;
+  scrollbar-width: thin;
+}
+
+.desktop-scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.desktop-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.desktop-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.7), rgba(6, 182, 212, 0.55));
+  border-radius: 999px;
+}
+
 /* Custom scrollbar for terminal */
 .terminal-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -295,4 +313,3 @@ input.terminal-cursor {
     @apply bg-background text-foreground;
   }
 }
-

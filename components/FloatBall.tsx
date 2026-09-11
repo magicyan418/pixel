@@ -10,6 +10,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import Desktop from "@/components/Desktop";
+import { AVAILABLE_PROJECTS } from "@/lib/commands";
 
 const FloatBall = () => {
   const [dimensions, setDimensions] = useState({ width: 60, height: 60 });
@@ -17,6 +18,7 @@ const FloatBall = () => {
   const halfWidth = dimensions.width / 2;
   const halfHeight = dimensions.height / 2;
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const faviconPreloadersRef = useRef<HTMLImageElement[]>([]);
 
   const [constraints, setConstraints] = useState({
     top: 0,
@@ -30,6 +32,19 @@ const FloatBall = () => {
 
   const [ready, setReady] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+
+  // 在启动台打开前预热浏览器缓存，避免项目图标挂载时才开始请求。
+  useEffect(() => {
+    faviconPreloadersRef.current = AVAILABLE_PROJECTS.map((project) => {
+      const image = new Image();
+      image.src = `/api/favicon?url=${encodeURIComponent(project.url)}`;
+      return image;
+    });
+
+    return () => {
+      faviconPreloadersRef.current = [];
+    };
+  }, []);
 
   // 初始化DotLottie动画
   useEffect(() => {
@@ -160,7 +175,7 @@ const FloatBall = () => {
       >
         <canvas ref={canvasRef} />
       </motion.div>
-      <DrawerContent className="pb-8 h-4/5">
+      <DrawerContent className="h-[90vh] max-h-[90vh] overflow-hidden border-0 bg-transparent px-3 pt-3 pb-0 shadow-none data-[vaul-drawer-direction=bottom]:max-h-[90vh] data-[vaul-drawer-direction=bottom]:border-0 data-[vaul-drawer-direction=bottom]:bg-transparent data-[vaul-drawer-direction=bottom]:rounded-none sm:px-5 [&>div:first-child]:hidden">
         <VisuallyHidden>
           <DrawerTitle></DrawerTitle>
         </VisuallyHidden>
